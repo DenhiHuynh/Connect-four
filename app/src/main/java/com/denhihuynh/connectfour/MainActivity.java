@@ -1,18 +1,19 @@
-package com.denhihuynh.connextfour;
+package com.denhihuynh.connectfour;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import fragments.GameFragment;
+import fragments.GameSetupFragment;
+import fragments.StartScreenFragment;
 import interfaces.OnFragmentInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+    public static final String SETUPGAME = "setupGame";
     public static final String START = "start";
     public static final String RESUME = "resume";
     public static final String HIGHSCORE = "highScore";
@@ -57,9 +58,15 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
      * @param command
      */
     @Override
-    public void onFragmentInteraction(String command) {
+    public void onFragmentInteraction(String command , ArrayList<String> extras) {
         switch (command){
+            case SETUPGAME:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, GameSetupFragment.newInstance()).commit();
+                break;
             case START:
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, GameFragment.newInstance(extras)).commit();
                 break;
             case RESUME:
                 break;

@@ -1,4 +1,4 @@
-package com.denhihuynh.connextfour;
+package com.denhihuynh.connectfour;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

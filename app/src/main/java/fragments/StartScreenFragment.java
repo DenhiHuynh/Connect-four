@@ -1,16 +1,18 @@
-package com.denhihuynh.connextfour;
+package fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+
+import com.denhihuynh.connectfour.MainActivity;
+import com.denhihuynh.connectfour.R;
+
+import java.util.ArrayList;
 
 import interfaces.OnFragmentInteractionListener;
 
@@ -28,12 +30,12 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_start_screen, container, false);
 
-        Button startButton = (Button) root.findViewById(R.id.startButton);
+        Button setupButton = (Button) root.findViewById(R.id.setupButton);
         Button resumeButton = (Button) root.findViewById(R.id.resumeButton);
-        Button highscoreButton = (Button) root.findViewById(R.id.highScoreButton);
-        startButton.setOnClickListener(this);
+        Button highScoreButton = (Button) root.findViewById(R.id.highScoreButton);
+        setupButton.setOnClickListener(this);
         resumeButton.setOnClickListener(this);
-        highscoreButton.setOnClickListener(this);
+        highScoreButton.setOnClickListener(this);
         return root;
     }
 
@@ -44,9 +46,10 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         String command = null;
+        ArrayList<String> extras = null;
         switch (v.getId()) {
-            case R.id.startButton:
-                command = MainActivity.START;
+            case R.id.setupButton:
+                command = MainActivity.SETUPGAME;
                 break;
             case R.id.resumeButton:
                 command = MainActivity.RESUME;
@@ -56,11 +59,15 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
                 break;
         }
         if (mListener != null) {
-            //Calling Mainactivity in order to switch fragment shown.
-            mListener.onFragmentInteraction(command);
+            //Calling Mainactivity in order to switch fragment.
+            mListener.onFragmentInteraction(command,extras);
         }
     }
 
+    /**
+     * Connecting Mainactivity's onFragmentInteraction method with fragment in onAttach.
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -73,6 +80,9 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
         }
     }
 
+    /**
+     * Detaches Mainactivity's onFragmentInteraction method with fragment in onDetach.
+     */
     @Override
     public void onDetach() {
         super.onDetach();

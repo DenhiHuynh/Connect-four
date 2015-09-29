@@ -1,5 +1,7 @@
 package interfaces;
 
+import java.util.ArrayList;
+
 /**
  * This interface must be implemented by activities that contain a
  * fragment to allow an interaction in this fragment to be communicated
@@ -11,5 +13,5 @@ package interfaces;
  * >Communicating with Other Fragments</a> for more information.
  */
 public interface OnFragmentInteractionListener {
-    public void onFragmentInteraction(String command);
+    void onFragmentInteraction(String command,ArrayList<String> extras);
 }

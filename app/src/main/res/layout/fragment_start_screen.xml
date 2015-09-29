@@ -16,7 +16,7 @@
         android:gravity="center_horizontal|center_vertical"
         android:textSize="50sp"/>
     <Button
-        android:id="@+id/startButton"
+        android:id="@+id/setupButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
