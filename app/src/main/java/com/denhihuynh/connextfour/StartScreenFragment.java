@@ -1,7 +1,9 @@
 package com.denhihuynh.connextfour;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,10 +12,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import interfaces.OnFragmentInteractionListener;
+
 /**
  * A placeholder fragment containing a simple view.
  */
 public class StartScreenFragment extends Fragment implements View.OnClickListener {
+    private OnFragmentInteractionListener mListener;
 
     public StartScreenFragment() {
     }
@@ -22,6 +27,7 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_start_screen, container, false);
+
         Button startButton = (Button) root.findViewById(R.id.startButton);
         Button resumeButton = (Button) root.findViewById(R.id.resumeButton);
         Button highscoreButton = (Button) root.findViewById(R.id.highScoreButton);
@@ -31,51 +37,46 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
         return root;
     }
 
-
+    /**
+     * Switches fragment when button is pressed.
+     * @param v view pressed.
+     */
     @Override
     public void onClick(View v) {
+        String command = null;
         switch (v.getId()) {
             case R.id.startButton:
-                Toast.makeText(getActivity(), "start",
-                        Toast.LENGTH_SHORT).show();
+                command = MainActivity.START;
                 break;
             case R.id.resumeButton:
-                Toast.makeText(getActivity(), "resume",
-                        Toast.LENGTH_SHORT).show();
+                command = MainActivity.RESUME;
                 break;
             case R.id.highScoreButton:
-                Toast.makeText(getActivity(), "high",
-                        Toast.LENGTH_SHORT).show();
+                command = MainActivity.HIGHSCORE;
                 break;
+        }
+        if (mListener != null) {
+            //Calling Mainactivity in order to switch fragment shown.
+            mListener.onFragmentInteraction(command);
         }
     }
 
-    /**
-     * Starts a new greed game.
-     * @param view
-     */
-    public void startNewGame(View view) {
-        Toast.makeText(getActivity(), "start new game",
-                Toast.LENGTH_LONG).show();
-        //switch fragment
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = getActivity();
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
-    /**
-     * Resumes an old game instance.
-     * @param view
-     */
-    public void resumeGame(View view) {
-        Toast.makeText(getActivity(), "resume game",
-                Toast.LENGTH_LONG).show();
-    }
-
-    /**
-     * Shows high score list.
-     * @param view
-     */
-    public void showHighScore(View view) {
-        Toast.makeText(getActivity(), "see highscore",
-                Toast.LENGTH_LONG).show();
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
 }

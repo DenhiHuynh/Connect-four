@@ -8,9 +8,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
-    private boolean onGoingGameExists;
+import interfaces.OnFragmentInteractionListener;
+
+public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
+    public static final String START = "start";
+    public static final String RESUME = "resume";
+    public static final String HIGHSCORE = "highScore";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,5 +50,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Method used by fragments in order to communicate with the activity. Used to switch fragments.
+     * @param command
+     */
+    @Override
+    public void onFragmentInteraction(String command) {
+        switch (command){
+            case START:
+                break;
+            case RESUME:
+                break;
+            case HIGHSCORE:
+                break;
+        }
+
     }
 }
