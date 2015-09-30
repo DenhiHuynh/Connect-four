@@ -1,6 +1,6 @@
 package com.denhihuynh.connectfour;
 
-import android.app.ActionBar;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-import fragments.GameFragment;
 import fragments.GameSetupFragment;
 import fragments.StartScreenFragment;
 import interfaces.OnFragmentInteractionListener;
@@ -59,23 +58,19 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
 
     /**
      * Method used by fragments in order to communicate with the activity. Used to switch fragments.
+     *
      * @param command
      */
     @Override
-    public void onFragmentInteraction(String command , ArrayList<String> extras) {
-        switch (command){
+    public void onFragmentInteraction(String command, ArrayList<String> extras) {
+        switch (command) {
             case SETUPGAME:
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, GameSetupFragment.newInstance()).commit();
                 break;
             case START:
-                android.support.v7.app.ActionBar bar = getSupportActionBar();
-                if(bar != null){
-                    bar.hide();
-                }
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, GameFragment.newInstance(extras)).commit();
-
+                Intent intent = new Intent(this, GameActivity.class);
+                startActivity(intent);
                 break;
             case RESUME:
                 break;
