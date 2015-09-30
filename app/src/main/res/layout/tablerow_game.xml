@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/display_row"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/button_column_1"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+    <Button
+        android:id="@+id/button_column_2"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+    <Button
+        android:id="@+id/button_column_3"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+    <Button
+        android:id="@+id/button_column_4"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+    <Button
+        android:id="@+id/button_column_5"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+    <Button
+        android:id="@+id/button_column_6"
+        android:layout_width="80dp"
+        android:layout_gravity="center"
+        android:layout_margin="2.5dp"
+        android:background="@drawable/rounded_corner_white" />
+
+
+</TableRow>

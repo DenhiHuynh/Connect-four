@@ -2,12 +2,15 @@ package fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import com.denhihuynh.connectfour.R;
 
@@ -20,6 +23,7 @@ public class GameFragment extends Fragment {
 
     private ArrayList<String> playerNames;
     private OnFragmentInteractionListener mListener;
+    private TableLayout tableLayout;
 
     public static GameFragment newInstance(ArrayList<String> playerNames) {
         GameFragment fragment = new GameFragment();
@@ -36,6 +40,8 @@ public class GameFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         if (getArguments() != null) {
             playerNames = getArguments().getStringArrayList(PLAYERNAMES);
         }
@@ -44,8 +50,20 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game, container, false);
+        View root = inflater.inflate(R.layout.fragment_game, container, false);
+        tableLayout = (TableLayout) root.findViewById(R.id.gameTable);
+        addGameBoardRows(inflater);
+        return root;
+    }
+
+    /**
+     * Adds rows to the tablelayout which represents the game board.
+     */
+    private void addGameBoardRows(LayoutInflater inflater) {
+        for(int i = 0;i<6;i++){
+            View rowView = inflater.inflate(R.layout.tablerow_game, null, false);
+            tableLayout.addView(rowView);
+        }
     }
 
     @Override

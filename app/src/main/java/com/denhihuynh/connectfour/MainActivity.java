@@ -1,7 +1,9 @@
 package com.denhihuynh.connectfour;
 
+import android.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,17 +19,19 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public static final String START = "start";
     public static final String RESUME = "resume";
     public static final String HIGHSCORE = "highScore";
-
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+        setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
 
         StartScreenFragment startScreenFragment = new StartScreenFragment();
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, startScreenFragment).commit();
+                .replace(R.id.fragment_container, startScreenFragment).commit();
     }
 
 
@@ -65,8 +69,13 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                         .replace(R.id.fragment_container, GameSetupFragment.newInstance()).commit();
                 break;
             case START:
+                android.support.v7.app.ActionBar bar = getSupportActionBar();
+                if(bar != null){
+                    bar.hide();
+                }
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, GameFragment.newInstance(extras)).commit();
+
                 break;
             case RESUME:
                 break;

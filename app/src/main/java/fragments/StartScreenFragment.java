@@ -32,10 +32,8 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
 
         Button setupButton = (Button) root.findViewById(R.id.setupButton);
         Button resumeButton = (Button) root.findViewById(R.id.resumeButton);
-        Button highScoreButton = (Button) root.findViewById(R.id.highScoreButton);
         setupButton.setOnClickListener(this);
         resumeButton.setOnClickListener(this);
-        highScoreButton.setOnClickListener(this);
         return root;
     }
 
@@ -53,9 +51,6 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.resumeButton:
                 command = MainActivity.RESUME;
-                break;
-            case R.id.highScoreButton:
-                command = MainActivity.HIGHSCORE;
                 break;
         }
         if (mListener != null) {
