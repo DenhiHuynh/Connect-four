@@ -54,15 +54,9 @@ public class ConnectFour {
      */
     public int evaluateGame() {
         //Check if current player has won
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (gameBoard[i][j] == currentPlayer) {
-                    boolean won = checkForWin(i, j);
-                    if (won) {
-                        return currentPlayer;
-                    }
-                }
-            }
+        boolean won = checkForWin();
+        if (won) {
+            return currentPlayer;
         }
         //Check if the board is full
         boolean fullBoard = true;
@@ -81,13 +75,90 @@ public class ConnectFour {
 
     /**
      * Help method to check if the current player has won.
-     * @param row
-     * @param col
+     *
      * @return
      */
-    private boolean checkForWin(int row, int col) {
-        //TODO implement method
-       return  false;
+    private boolean checkForWin() {
+        //Horizontal check
+        for (int i = 0; i < rows; i++) {
+            int nInLine = 0;
+            for (int j = 0; j < cols; j++) {
+                if (gameBoard[i][j] == currentPlayer) {
+                    nInLine++;
+                    if (nInLine == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLine = 0;
+                }
+            }
+        }
+
+        //Vertical check
+        for (int i = 0; i < cols; i++) {
+            int nInLine = 0;
+            for (int j = 0; j < rows; j++) {
+                if (gameBoard[j][i] == currentPlayer) {
+                    nInLine++;
+                    if (nInLine == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLine = 0;
+                }
+            }
+        }
+
+        //Diagonal check
+        for (int c = 0; c < 4; c++) {
+            int diag = 0;
+            int nInLineUp = 0;
+            int nInLineDown = 0;
+            while (diag < rows && c + diag < cols) {
+                if (gameBoard[diag][c + diag] == currentPlayer) {
+                    nInLineUp++;
+                    if (nInLineUp == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLineUp = 0;
+                }
+                if (gameBoard[rows - 1 - diag][c + diag] == currentPlayer) {
+                    nInLineDown++;
+                    if (nInLineDown == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLineDown = 0;
+                }
+                diag++;
+            }
+        }
+        for (int r = 1; r < 3; r++) {
+            int diag = 0;
+            int nInLineUp = 0;
+            int nInLineDown = 0;
+            while (r + diag < rows && diag < cols) {
+                if (gameBoard[r + diag][diag] == currentPlayer) {
+                    nInLineUp++;
+                    if (nInLineUp == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLineUp = 0;
+                }
+                if (gameBoard[rows - 1 - diag][diag] == currentPlayer) {
+                    nInLineDown++;
+                    if (nInLineDown == 4) {
+                        return true;
+                    }
+                } else {
+                    nInLineUp = 0;
+                }
+                diag++;
+            }
+        }
+        return false;
     }
 
 }

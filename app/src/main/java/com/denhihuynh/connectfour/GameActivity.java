@@ -13,12 +13,15 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import model.ConnectFour;
+
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     final static long INTERVAL = 500;
     final static long TIMEOUT = 5000;
     private TableLayout tableLayout;
     private ArrayList<TableRow> gameBoardTable;
     private DiscDropper discDropper;
+    private ConnectFour connectFour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,27 +64,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.button_column_1:
                 col = 0;
-                System.out.println("---------------------------- col1");
                 break;
             case R.id.button_column_2:
                 col = 1;
-                System.out.println("---------------------------- col2");
                 break;
             case R.id.button_column_3:
                 col = 2;
-                System.out.println("---------------------------- col3");
                 break;
             case R.id.button_column_4:
                 col = 3;
-                System.out.println("---------------------------- col4");
                 break;
             case R.id.button_column_5:
                 col = 4;
-                System.out.println("---------------------------- col5");
                 break;
             case R.id.button_column_6:
                 col = 5;
-                System.out.println("---------------------------- col6");
                 break;
         }
         dropDisc(col);
