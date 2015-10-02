@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-import fragments.GameSetupFragment;
 import fragments.StartScreenFragment;
 import interfaces.OnFragmentInteractionListener;
 
@@ -24,9 +23,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
-        setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
-
         StartScreenFragment startScreenFragment = new StartScreenFragment();
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
@@ -65,12 +61,12 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public void onFragmentInteraction(String command, ArrayList<String> extras) {
         switch (command) {
             case SETUPGAME:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, GameSetupFragment.newInstance()).commit();
+                Intent setupIntent = new Intent(this, GameSetupActivity.class);
+                startActivity(setupIntent);
                 break;
             case START:
-                Intent intent = new Intent(this, GameActivity.class);
-                startActivity(intent);
+                Intent gameIntent = new Intent(this, GameActivity.class);
+                startActivity(gameIntent);
                 break;
             case RESUME:
                 break;

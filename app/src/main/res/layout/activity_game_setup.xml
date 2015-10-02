@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue_500"
+    android:orientation="vertical"
+    tools:context="fragments.GameSetupFragment">
+
+    <TextView
+        android:id="@+id/setupText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Setup game"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+
+
+    <EditText
+        android:id="@+id/edittext_firstplayer"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/setupText"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:hint="First player name"
+        android:maxLength="15"
+        android:textSize="25sp" />
+
+    <Button
+        android:id="@+id/color_firstPlayer"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/setupText"
+        android:background="@drawable/rounded_corner_red" />
+
+
+    <EditText
+        android:id="@+id/edittext_secondplayer"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/white"
+        android:textColor="@color/white"
+        android:layout_below="@+id/edittext_firstplayer"
+        android:hint="Second player name"
+        android:maxLength="15"
+        android:textSize="25sp" />
+
+    <Button
+        android:id="@+id/color_secondPlayer"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/edittext_firstplayer"
+        android:layout_weight="0.3"
+        android:background="@drawable/rounded_corner_yellow" />
+
+
+    <Button
+        android:id="@+id/startButton"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
+        android:background="@color/light_blue_A700"
+        android:text="Start new game"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+</RelativeLayout>

@@ -22,7 +22,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<TableRow> gameBoardTable;
     private DiscDropper discDropper;
     private ConnectFour connectFour;
-    private int rows,cols;
+    private int rows, cols;
     private int currentPlayer;
     private TextView currentPlayerText;
     private Button currentPlayerColor;
@@ -36,10 +36,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         rows = 6;
         cols = 7;
         //Using a normal 6x7 game board with two players.
-        connectFour = new ConnectFour(rows,cols,2);
+        connectFour = new ConnectFour(rows, cols, 2);
         currentPlayer = 0;
         currentPlayerColor = (Button) findViewById(R.id.currentPlayerColorButton);
         currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String firstPlayer = extras.getString(GameSetupActivity.FIRSTPLAYER);
+            String secondPlayer = extras.getString(GameSetupActivity.SECONDPLAYER);
+            System.out.println(firstPlayer + " ------------------------------- " + secondPlayer);
+        }
+
         addGameBoardRows();
     }
 
@@ -105,9 +112,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int addedToCol = connectFour.addToColumn(col);
             int destinationRowIndex = rows - 1 - addedToCol;
             if (addedToCol != ConnectFour.COLISFULL) {
-                if(currentPlayer == 0){
+                if (currentPlayer == 0) {
                     discDropper = new DiscDropper(destinationRowIndex, col, R.drawable.rounded_corner_red);
-                }else{
+                } else {
                     discDropper = new DiscDropper(destinationRowIndex, col, R.drawable.rounded_corner_yellow);
                 }
                 discDropper.start();
@@ -124,7 +131,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Evaluates the game board to check if its time for a new player, gameboard is full or if a winner exists.
      */
-    private void evaluateGame(){
+    private void evaluateGame() {
         final int action = connectFour.evaluateGame();
         switch (action) {
             case ConnectFour.FULLBOARD:
@@ -164,76 +171,76 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-/**
- * Class for handling dropping of discs into game board.
- */
-private class DiscDropper {
-    private TimerTask timerTask;
-    private int rowIndex;
-    private int col;
-    private int drawableId;
-    private int destinationRowIndex;
-    private boolean isFinished;
+    /**
+     * Class for handling dropping of discs into game board.
+     */
+    private class DiscDropper {
+        private TimerTask timerTask;
+        private int rowIndex;
+        private int col;
+        private int drawableId;
+        private int destinationRowIndex;
+        private boolean isFinished;
 
-    public DiscDropper(final int destinationRowIndex, final int col, final int drawableId) {
-        this.col = col;
-        this.drawableId = drawableId;
-        this.destinationRowIndex = destinationRowIndex;
-        rowIndex = 0;
-        isFinished = false;
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (rowIndex < destinationRowIndex && destinationRowIndex >= 0) {
-                    GameActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
-                            gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(drawableId);
-                            rowIndex++;
-                        }
-                    });
-                } else {
-                    evaluateGame();
-                    isFinished = true;
-                    cancel();
+        public DiscDropper(final int destinationRowIndex, final int col, final int drawableId) {
+            this.col = col;
+            this.drawableId = drawableId;
+            this.destinationRowIndex = destinationRowIndex;
+            rowIndex = 0;
+            isFinished = false;
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (rowIndex < destinationRowIndex && destinationRowIndex >= 0) {
+                        GameActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
+                                gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(drawableId);
+                                rowIndex++;
+                            }
+                        });
+                    } else {
+                        evaluateGame();
+                        isFinished = true;
+                        cancel();
+                    }
                 }
-            }
-        };
+            };
+        }
+
+        /**
+         * Starts the discdropper. If the disc dropper is already started, then the disc is instantly dropped to the bottom.
+         */
+        public void start() {
+            gameBoardTable.get(0).getChildAt(col).setBackgroundResource(drawableId);
+            Timer timer = new Timer();
+            timer.scheduleAtFixedRate(timerTask, INTERVAL, INTERVAL);
+        }
+
+        /**
+         * Instantly drops the disc to the correct position
+         */
+        public void stop() {
+            timerTask.cancel();
+            evaluateGame();
+            if (rowIndex < 6 && rowIndex < destinationRowIndex)
+                gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
+
+            if (rowIndex < 5 && rowIndex < destinationRowIndex - 1)
+                gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
+
+            gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);
+        }
+
+        /**
+         * Checks if the timertask has finished.
+         *
+         * @return if the timertask has finished.
+         */
+        public boolean isFinished() {
+            return isFinished;
+        }
+
     }
-
-    /**
-     * Starts the discdropper. If the disc dropper is already started, then the disc is instantly dropped to the bottom.
-     */
-    public void start() {
-        gameBoardTable.get(0).getChildAt(col).setBackgroundResource(drawableId);
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, INTERVAL, INTERVAL);
-    }
-
-    /**
-     * Instantly drops the disc to the correct position
-     */
-    public void stop() {
-        timerTask.cancel();
-        evaluateGame();
-        if (rowIndex < 6 && rowIndex < destinationRowIndex)
-            gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
-
-        if (rowIndex < 5 && rowIndex < destinationRowIndex - 1)
-            gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
-
-        gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);
-    }
-
-    /**
-     * Checks if the timertask has finished.
-     *
-     * @return if the timertask has finished.
-     */
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-}
 }
