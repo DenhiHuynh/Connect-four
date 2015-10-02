@@ -1,6 +1,5 @@
 package com.denhihuynh.connectfour;
 
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -16,12 +17,15 @@ import java.util.TimerTask;
 import model.ConnectFour;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
-    final static long INTERVAL = 500;
-    final static long TIMEOUT = 5000;
+    final static long INTERVAL = 200;
     private TableLayout tableLayout;
     private ArrayList<TableRow> gameBoardTable;
     private DiscDropper discDropper;
     private ConnectFour connectFour;
+    private int rows,cols;
+    private int currentPlayer;
+    private TextView currentPlayerText;
+    private Button currentPlayerColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
         gameBoardTable = new ArrayList<>();
         tableLayout = (TableLayout) findViewById(R.id.gameTable);
+        rows = 6;
+        cols = 7;
+        //Using a normal 6x7 game board with two players.
+        connectFour = new ConnectFour(rows,cols,2);
+        currentPlayer = 0;
+        currentPlayerColor = (Button) findViewById(R.id.currentPlayerColorButton);
+        currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
         addGameBoardRows();
     }
 
@@ -90,13 +101,65 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @param col the column to drop a disc into
      */
     private void dropDisc(final int col) {
-        //TODO fixa korrekt shite
         if (discDropper == null || discDropper.isFinished()) {
-            discDropper = new DiscDropper(5, col, R.drawable.rounded_corner_red);
-            discDropper.start();
+            int addedToCol = connectFour.addToColumn(col);
+            int destinationRowIndex = rows - 1 - addedToCol;
+            if (addedToCol != ConnectFour.COLISFULL) {
+                if(currentPlayer == 0){
+                    discDropper = new DiscDropper(destinationRowIndex, col, R.drawable.rounded_corner_red);
+                }else{
+                    discDropper = new DiscDropper(destinationRowIndex, col, R.drawable.rounded_corner_yellow);
+                }
+                discDropper.start();
+            } else {
+                Toast.makeText(getApplicationContext(), "Column is full",
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
             discDropper.stop();
             discDropper = null;
+        }
+    }
+
+    /**
+     * Evaluates the game board to check if its time for a new player, gameboard is full or if a winner exists.
+     */
+    private void evaluateGame(){
+        final int action = connectFour.evaluateGame();
+        switch (action) {
+            case ConnectFour.FULLBOARD:
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Gameboard is full yo",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case ConnectFour.CONTINUEDGAME:
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        currentPlayer = (currentPlayer + 1) % 2;
+                        currentPlayerText.setText(Integer.toString(currentPlayer + 1));
+                        if (currentPlayer == 0) {
+                            currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_red);
+                        } else {
+                            currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_yellow);
+                        }
+                    }
+                });
+                break;
+            default:
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Winner winner chicken dinner, player " + Integer.toString(action + 1) + " won",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+
         }
     }
 
@@ -121,7 +184,7 @@ private class DiscDropper {
         timerTask = new TimerTask() {
             @Override
             public void run() {
-                if (rowIndex < destinationRowIndex) {
+                if (rowIndex < destinationRowIndex && destinationRowIndex >= 0) {
                     GameActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -131,6 +194,7 @@ private class DiscDropper {
                         }
                     });
                 } else {
+                    evaluateGame();
                     isFinished = true;
                     cancel();
                 }
@@ -152,11 +216,11 @@ private class DiscDropper {
      */
     public void stop() {
         timerTask.cancel();
-
-        if (rowIndex < 6)
+        evaluateGame();
+        if (rowIndex < 6 && rowIndex < destinationRowIndex)
             gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
 
-        if (rowIndex < 5)
+        if (rowIndex < 5 && rowIndex < destinationRowIndex - 1)
             gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
 
         gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);

@@ -37,7 +37,7 @@ public class ConnectFour {
      */
     public int addToColumn(int col) {
         for (int i = 0; i < rows; i++) {
-            if (gameBoard[i][col] == -1) {
+            if (gameBoard[i][col] < 0) {
                 gameBoard[i][col] = currentPlayer;
                 return i;
             }
@@ -60,7 +60,7 @@ public class ConnectFour {
         }
         //Check if the board is full
         boolean fullBoard = true;
-        for (int i = 0; i < cols; i++) {
+        for (int i = 0; i < rows; i++) {
             if (gameBoard[rows - 1][i] == -1) {
                 fullBoard = false;
             }
