@@ -16,8 +16,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     public static final String SETUPGAME = "setupGame";
     public static final String START = "start";
     public static final String RESUME = "resume";
-    public static final String HIGHSCORE = "highScore";
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 startActivity(gameIntent);
                 break;
             case RESUME:
-                break;
-            case HIGHSCORE:
                 break;
         }
 

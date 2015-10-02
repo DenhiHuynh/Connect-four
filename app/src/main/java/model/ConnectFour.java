@@ -46,15 +46,14 @@ public class ConnectFour {
     }
 
     /**
-     * Evaluates the game to check if the current player won.
-     * When check is done, its time for the next player.
+     * Evaluates the game to check if the current player won, if the board is full or just continued game.
      *
      * @return the number of the winner if there is one, otherwise a command
      * explaining the state of the game (FULLBOARD, CONTINUEDGAME).
      */
-    public int evaluateGame() {
+    public int evaluateGame(int row,int col) {
         //Check if current player has won
-        boolean won = checkForWin();
+        boolean won = checkForWin(row,col);
         if (won) {
             return currentPlayer;
         }
@@ -74,91 +73,52 @@ public class ConnectFour {
     }
 
     /**
-     * Help method to check if the current player has won.
-     *
-     * @return
+     * Check if the last put disc resulted in a win.
+     * @param r the last row index
+     * @param c the last col index
+     * @return if currentplayer has won or not.
      */
-    private boolean checkForWin() {
-        //Horizontal check
-        for (int i = 0; i < rows; i++) {
-            int nInLine = 0;
-            for (int j = 0; j < cols; j++) {
-                if (gameBoard[i][j] == currentPlayer) {
-                    nInLine++;
-                    if (nInLine == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLine = 0;
-                }
-            }
-        }
+    private boolean checkForWin(int r, int c){
+        int nDirs = 8;
+        int xInc[] = {1, 1, 0, -1, -1, -1, 0,   1};
+        int yInc[] = {0, 1, 1,  1,  0, -1, -1, -1};
 
-        //Vertical check
-        for (int i = 0; i < cols; i++) {
-            int nInLine = 0;
-            for (int j = 0; j < rows; j++) {
-                if (gameBoard[j][i] == currentPlayer) {
-                    nInLine++;
-                    if (nInLine == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLine = 0;
-                }
-            }
-        }
-
-        //Diagonal check
-        for (int c = 0; c < 4; c++) {
-            int diag = 0;
-            int nInLineUp = 0;
-            int nInLineDown = 0;
-            while (diag < rows && c + diag < cols) {
-                if (gameBoard[diag][c + diag] == currentPlayer) {
-                    nInLineUp++;
-                    if (nInLineUp == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLineUp = 0;
-                }
-                if (gameBoard[rows - 1 - diag][c + diag] == currentPlayer) {
-                    nInLineDown++;
-                    if (nInLineDown == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLineDown = 0;
-                }
-                diag++;
-            }
-        }
-        for (int r = 1; r < 3; r++) {
-            int diag = 0;
-            int nInLineUp = 0;
-            int nInLineDown = 0;
-            while (r + diag < rows && diag < cols) {
-                if (gameBoard[r + diag][diag] == currentPlayer) {
-                    nInLineUp++;
-                    if (nInLineUp == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLineUp = 0;
-                }
-                if (gameBoard[rows - 1 - diag][diag] == currentPlayer) {
-                    nInLineDown++;
-                    if (nInLineDown == 4) {
-                        return true;
-                    }
-                } else {
-                    nInLineUp = 0;
-                }
-                diag++;
+        for(int i=0;i<nDirs; i++){
+            if (winInDir(r, c, xInc[i], yInc[i])){
+                return true;
             }
         }
         return false;
     }
+
+    /**
+     * Check if the row index and col index given is inside gameboard.
+     * @param r the row index
+     * @param c the col index
+     * @return if r and c is inside of the game board.
+     */
+    boolean inBound(int r, int c){
+        return !(r>=rows || r<0 || c>=cols || c<0);
+    }
+
+    /**
+     * Checks if there is a winning move in some direction given by (xInc,yInc)
+     * @param r the last row index
+     * @param c the last col index
+     * @param rInc the direction to check in rows
+     * @param cInc the direction to check in cols
+     * @return if there is a win in the given direction of the board.
+     */
+    boolean winInDir(int r, int c, int rInc, int cInc){
+        int inLine=0;
+        while(inBound(r, c) && gameBoard[r][c] == currentPlayer){
+            inLine++;
+            r+=rInc;
+            c+=cInc;
+        }
+        return inLine>=4;
+    }
+
+
 
 }

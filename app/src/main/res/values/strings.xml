@@ -17,5 +17,6 @@
     <string name="activity_game_setup_setup_game">Setup game</string>
     <string name="activity_game_start_player_number">1</string>
     <string name="activity_game_start_player_text">Player:</string>
+    <string name="activity_game_result_rematch">Rematch</string>
 
 </resources>

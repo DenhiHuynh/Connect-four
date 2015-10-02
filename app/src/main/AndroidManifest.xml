@@ -20,17 +20,15 @@
         <activity
             android:name=".GameActivity"
             android:label="@string/title_activity_game"
-            android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".GameSetupActivity"
             android:label="@string/title_activity_game_setup"
-            android:parentActivityName=".MainActivity"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".FinishedGameActivity"
+            android:name=".GameResultActivity"
             android:screenOrientation="landscape"
             android:label="@string/title_activity_finished_game" >
         </activity>

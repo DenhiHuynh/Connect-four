@@ -1,5 +1,6 @@
 package com.denhihuynh.connectfour;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int currentPlayer;
     private TextView currentPlayerText;
     private Button currentPlayerColor;
+    private ArrayList<String> playerNames;
+    private int lastRow,lastCol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +45,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String firstPlayer = extras.getString(GameSetupActivity.FIRSTPLAYER);
-            String secondPlayer = extras.getString(GameSetupActivity.SECONDPLAYER);
-            System.out.println(firstPlayer + " ------------------------------- " + secondPlayer);
+            playerNames = extras.getStringArrayList(GameSetupActivity.PLAYERNAMES);
         }
 
         addGameBoardRows();
@@ -109,9 +110,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void dropDisc(final int col) {
         if (discDropper == null || discDropper.isFinished()) {
-            int addedToCol = connectFour.addToColumn(col);
-            int destinationRowIndex = rows - 1 - addedToCol;
-            if (addedToCol != ConnectFour.COLISFULL) {
+            int lastAddedRow = connectFour.addToColumn(col);
+            lastCol = col;
+            lastRow = lastAddedRow;
+            int destinationRowIndex = rows - 1 - lastAddedRow;
+            if (lastAddedRow != ConnectFour.COLISFULL) {
                 if (currentPlayer == 0) {
                     discDropper = new DiscDropper(destinationRowIndex, col, R.drawable.rounded_corner_red);
                 } else {
@@ -132,16 +135,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Evaluates the game board to check if its time for a new player, gameboard is full or if a winner exists.
      */
     private void evaluateGame() {
-        final int action = connectFour.evaluateGame();
+        final int action = connectFour.evaluateGame(lastRow, lastCol);
         switch (action) {
             case ConnectFour.FULLBOARD:
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Gameboard is full yo",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Bundle extra = new Bundle();
+                extra.putStringArrayList(GameResultActivity.PLAYERNAMES,playerNames);
+                extra.putString(GameResultActivity.RESULT, GameResultActivity.RESULTTIE);
+                Intent tieIntent = new Intent(this,GameResultActivity.class);
+                tieIntent.putExtras(extra);
+                startActivity(tieIntent);
                 break;
             case ConnectFour.CONTINUEDGAME:
                 this.runOnUiThread(new Runnable() {
@@ -157,19 +159,30 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 break;
-            default:
-                this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), "Winner winner chicken dinner, player " + Integer.toString(action + 1) + " won",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+            default: //This means we have a winner
+                Bundle extras = new Bundle();
+                extras.putString(GameResultActivity.RESULT, GameResultActivity.RESULTWINNER);
+                extras.putStringArrayList(GameResultActivity.PLAYERNAMES,playerNames);
+                if(currentPlayer == 0){
+                    extras.putString(GameResultActivity.WINNERNAME,playerNames.get(0));
+                }else{
+                    extras.putString(GameResultActivity.WINNERNAME,playerNames.get(1));
+                }
+                Intent winIntent = new Intent(this,GameResultActivity.class);
+                winIntent.putExtras(extras);
+                startActivity(winIntent);
                 break;
 
         }
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        //TODO add savegameboard
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
 
     /**
      * Class for handling dropping of discs into game board.

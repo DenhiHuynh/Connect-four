@@ -8,14 +8,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.denhihuynh.connectfour.R;
 
 import java.util.ArrayList;
 
 public class GameSetupActivity extends AppCompatActivity implements View.OnClickListener {
-    public final static String FIRSTPLAYER = "firstPlayer";
-    public final static String SECONDPLAYER = "secondPlayer";
+    public final static String PLAYERNAMES = "playerNames";
     private EditText playerOneName, playerTwoName;
 
     @Override
@@ -52,13 +52,33 @@ public class GameSetupActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        Bundle extras = new Bundle();
+
         String firstPlayer = String.valueOf(playerOneName.getText());
         String secondPlayer = String.valueOf(playerTwoName.getText());
-        extras.putString(FIRSTPLAYER,firstPlayer);
-        extras.putString(SECONDPLAYER,secondPlayer);
+        if(firstPlayer.equals("") || secondPlayer.equals("")){
+            Toast.makeText(getApplicationContext(), "Players must have names between 1-15 characters",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(firstPlayer.equals(secondPlayer)){
+            Toast.makeText(getApplicationContext(), "Players can not have the same name",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ArrayList<String> playerNames = new ArrayList<>();
+        playerNames.add(firstPlayer);
+        playerNames.add(secondPlayer);
+        Bundle extras = new Bundle();
+        extras.putStringArrayList(PLAYERNAMES, playerNames);
         Intent intent = new Intent(this,GameActivity.class);
         intent.putExtras(extras);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
     }
 }
