@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:gravity="center_horizontal"
-                android:text="Player:"
+                android:text="@string/activity_game_start_player_text"
                 android:textSize="20sp"
                 android:textColor="@color/white" />
 
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:gravity="center_horizontal"
-                android:text="1"
+                android:text="@string/activity_game_start_player_number"
                 android:textColor="@color/white"
                 android:textSize="25sp" />
 

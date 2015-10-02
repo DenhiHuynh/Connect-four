@@ -8,5 +8,14 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_game_setup">GameSetupActivity</string>
+    <string name="title_activity_finished_game">FinishedGameActivity</string>
+    <string name="fragment_start_screen_high_score">High score</string>
+    <string name="fragment_start_screen_resume_game">Resume game</string>
+    <string name="fragment_start_screen_start_new_game">Start new game</string>
+    <string name="activity_game_setup_second_player_name">Second player name</string>
+    <string name="activity_game_setup_first_player_name">First player name</string>
+    <string name="activity_game_setup_setup_game">Setup game</string>
+    <string name="activity_game_start_player_number">1</string>
+    <string name="activity_game_start_player_text">Player:</string>
 
 </resources>

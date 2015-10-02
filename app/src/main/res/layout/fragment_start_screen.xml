@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="High score"
+        android:text="@string/fragment_start_screen_high_score"
         android:textColor="@color/white"
         android:gravity="center_horizontal|center_vertical"
         android:textSize="30sp"/>
@@ -39,7 +39,7 @@
             android:layout_weight="1"
             style="?android:attr/borderlessButtonStyle"
             android:background="@color/light_blue_A700"
-            android:text="Start new game"
+            android:text="@string/fragment_start_screen_start_new_game"
             android:textColor="@color/white"
             android:textSize="25sp"/>
 
@@ -51,7 +51,7 @@
             android:layout_weight="1"
             style="?android:attr/borderlessButtonStyle"
             android:background="@color/light_blue_A700"
-            android:text="Resume game"
+            android:text="@string/fragment_start_screen_resume_game"
             android:textColor="@color/white"
             android:textSize="25sp"
            />
