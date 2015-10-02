@@ -18,5 +18,9 @@
     <string name="activity_game_start_player_number">1</string>
     <string name="activity_game_start_player_text">Player:</string>
     <string name="activity_game_result_rematch">Rematch</string>
+    <string name="quit">Really quit?</string>
+    <string name="really_quit">Are you sure you want to quit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

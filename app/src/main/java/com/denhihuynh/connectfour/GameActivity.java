@@ -181,6 +181,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     {
         //TODO add savegameboard
         Intent intent = new Intent(this,MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
