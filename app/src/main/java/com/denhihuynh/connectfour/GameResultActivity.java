@@ -3,6 +3,7 @@ package com.denhihuynh.connectfour;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,13 +13,17 @@ import android.widget.TextView;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 
+import database.HighScoresDataSource;
+
 public class GameResultActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "GameResultActivity";
     public static final String RESULT = "result";
     public static final String RESULTTIE = "tie";
     public static final String RESULTWINNER = "winner";
     public static final String WINNERNAME = "winner";
-    public static final String PLAYERNAMES =  "playerNames";
+    public static final String PLAYERNAMES = "playerNames";
     private ArrayList<String> playerNames;
+    private HighScoresDataSource dataSource;
 
 
     @Override
@@ -26,6 +31,8 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_result);
         Bundle extras = getIntent().getExtras();
+        dataSource = new HighScoresDataSource(this);
+        dataSource.open();
         Button setupButton = (Button) findViewById(R.id.setupButton);
         Button rematchButton = (Button) findViewById(R.id.rematchButton);
         setupButton.setOnClickListener(this);
@@ -35,21 +42,37 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         if (extras != null) {
             playerNames = extras.getStringArrayList(PLAYERNAMES);
             String result = extras.getString(RESULT);
-            switch(result){
+            switch (result) {
                 case RESULTWINNER:
                     bigResultTextView.setText("Winner");
-                        String winner = extras.getString(RESULTWINNER);
-                        resultTextView.setText("Congratulations, " + winner + " has won.");
+                    String winner = extras.getString(RESULTWINNER);
+                    String winText = "Congratulations, " + winner + " has won.";
+                    resultTextView.setText(winText);
+                    dataSource.addHighScore(winner, HighScoresDataSource.WIN);
+                    if (winner != null) {
+                        if (winner.equals(playerNames.get(0))) {
+                            dataSource.addHighScore(playerNames.get(1), HighScoresDataSource.LOSS);
+                        } else {
+                            dataSource.addHighScore(playerNames.get(0), HighScoresDataSource.LOSS);
+                        }
+                    } else {
+                        //This should not happen. Log message is written if it happens.
+                        Log.e(TAG, "Winner pointed to null");
+                    }
                     break;
                 case RESULTTIE:
                     bigResultTextView.setText("Draw");
-                    resultTextView.setText("Game between " + playerNames.get(0) + " and " + playerNames.get(1) + " has ended in a draw.");
+                    String drawText = "Game between " + playerNames.get(0) + " and " + playerNames.get(1) + " has ended in a draw.";
+                    resultTextView.setText(drawText);
+                    dataSource.addHighScore(playerNames.get(0), HighScoresDataSource.DRAW);
+                    dataSource.addHighScore(playerNames.get(1), HighScoresDataSource.DRAW);
                     break;
             }
 
-        }else{
-            System.out.println("GameResultactivity did not get playerNames");
+        } else {
+            Log.e(TAG, "GameResultactivity did not get playerNames");
         }
+        dataSource.close();
     }
 
     @Override
@@ -76,7 +99,7 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.setupButton:
                 Intent setupIntent = new Intent(this, GameSetupActivity.class);
                 startActivity(setupIntent);
@@ -84,7 +107,7 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
             case R.id.rematchButton:
                 Bundle extras = new Bundle();
                 extras.putStringArrayList(PLAYERNAMES, playerNames);
-                Intent intent = new Intent(this,GameActivity.class);
+                Intent intent = new Intent(this, GameActivity.class);
                 intent.putExtras(extras);
                 startActivity(intent);
                 break;
@@ -92,9 +115,8 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onBackPressed()
-    {
-        Intent intent = new Intent(this,MainActivity.class);
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

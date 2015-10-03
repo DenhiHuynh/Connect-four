@@ -21,17 +21,17 @@ import interfaces.OnFragmentInteractionListener;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class StartScreenFragment extends Fragment implements View.OnClickListener {
+public class StartScreenButtonFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
     private SharedPreferences prefs;
 
-    public StartScreenFragment() {
+    public StartScreenButtonFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_start_screen, container, false);
+        View root = inflater.inflate(R.layout.fragment_start_screen_button, container, false);
         prefs = getActivity().getSharedPreferences(
                 "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
         Button setupButton = (Button) root.findViewById(R.id.setupButton);

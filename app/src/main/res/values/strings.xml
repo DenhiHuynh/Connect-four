@@ -22,5 +22,6 @@
     <string name="really_quit">Are you sure you want to quit?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="game_title_text">Connect 4</string>
 
 </resources>
