@@ -1,6 +1,10 @@
 package model;
 
+import android.content.SharedPreferences;
+
 import java.util.ArrayList;
+
+import constants.SharedPreferenceConstants;
 
 /**
  * This class is a representation of a connect four game.
@@ -16,7 +20,9 @@ public class ConnectFour {
     private final int rows, cols, nbrOfPlayers;
     private int currentPlayer;
 
-    public ConnectFour(int rows, int cols, int nbrOfPlayers) {
+    private SharedPreferences prefs;
+
+    public ConnectFour(int rows, int cols, int nbrOfPlayers, SharedPreferences prefs) {
         this.rows = rows;
         this.cols = cols;
         this.nbrOfPlayers = nbrOfPlayers;
@@ -27,6 +33,7 @@ public class ConnectFour {
                 gameBoard[i][j] = -1;
             }
         }
+        this.prefs = prefs;
     }
 
     /**
@@ -51,9 +58,9 @@ public class ConnectFour {
      * @return the number of the winner if there is one, otherwise a command
      * explaining the state of the game (FULLBOARD, CONTINUEDGAME).
      */
-    public int evaluateGame(int row,int col) {
+    public int evaluateGame(int row, int col) {
         //Check if current player has won
-        boolean won = checkForWin(row,col);
+        boolean won = checkForWin(row, col);
         if (won) {
             return currentPlayer;
         }
@@ -74,17 +81,18 @@ public class ConnectFour {
 
     /**
      * Check if the last put disc resulted in a win.
+     *
      * @param r the last row index
      * @param c the last col index
      * @return if currentplayer has won or not.
      */
-    private boolean checkForWin(int r, int c){
+    private boolean checkForWin(int r, int c) {
         int nDirs = 8;
-        int xInc[] = {1, 1, 0, -1, -1, -1, 0,   1};
-        int yInc[] = {0, 1, 1,  1,  0, -1, -1, -1};
+        int xInc[] = {1, 1, 0, -1, -1, -1, 0, 1};
+        int yInc[] = {0, 1, 1, 1, 0, -1, -1, -1};
 
-        for(int i=0;i<nDirs; i++){
-            if (winInDir(r, c, xInc[i], yInc[i])){
+        for (int i = 0; i < nDirs; i++) {
+            if (winInDir(r, c, xInc[i], yInc[i])) {
                 return true;
             }
         }
@@ -93,32 +101,89 @@ public class ConnectFour {
 
     /**
      * Check if the row index and col index given is inside gameboard.
+     *
      * @param r the row index
      * @param c the col index
      * @return if r and c is inside of the game board.
      */
-    boolean inBound(int r, int c){
-        return !(r>=rows || r<0 || c>=cols || c<0);
+    boolean inBound(int r, int c) {
+        return !(r >= rows || r < 0 || c >= cols || c < 0);
     }
 
     /**
      * Checks if there is a winning move in some direction given by (xInc,yInc)
-     * @param r the last row index
-     * @param c the last col index
+     *
+     * @param r    the last row index
+     * @param c    the last col index
      * @param rInc the direction to check in rows
      * @param cInc the direction to check in cols
      * @return if there is a win in the given direction of the board.
      */
-    boolean winInDir(int r, int c, int rInc, int cInc){
-        int inLine=0;
-        while(inBound(r, c) && gameBoard[r][c] == currentPlayer){
+    boolean winInDir(int r, int c, int rInc, int cInc) {
+        int inLine = 0;
+        while (inBound(r, c) && gameBoard[r][c] == currentPlayer) {
             inLine++;
-            r+=rInc;
-            c+=cInc;
+            r += rInc;
+            c += cInc;
         }
-        return inLine>=4;
+        return inLine >= 4;
     }
 
+    /**
+     * Saves the game instance to shared preferences.
+     */
+    public void saveGameInstance() {
+        prefs.edit().putInt(SharedPreferenceConstants.CONNECTFOURCURRENTPLAYER, currentPlayer).apply();
+        prefs.edit().putString(SharedPreferenceConstants.CONNECTFOURGAMEBOARD, gameBoardToString()).apply();
+    }
 
+    /**
+     * Creates a previously saved game instance.
+     */
+    public boolean getGameInstance(){
+        currentPlayer = prefs.getInt(SharedPreferenceConstants.CONNECTFOURCURRENTPLAYER, 0);
+        String gameBoardString = prefs.getString(SharedPreferenceConstants.CONNECTFOURGAMEBOARD, null);
+        if(gameBoardString != null){
+            stringToGameBoard(gameBoardString);
+            return true;
+        }else{
+            return false;
+        }
+    }
 
+    public int[][] getGameBoard(){
+        return gameBoard;
+    }
+
+    /**
+     * Creates a string representation out of the game board, which can be saved into SharedPreferences
+     *
+     * @return
+     */
+    private String gameBoardToString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                sb.append(gameBoard[i][j] + ",");
+            }
+            sb.append(";");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Creates the int representation of the gameBoard from a String which was saved in sharedpreferences
+     *
+     * @param gameBoardString
+     * @return
+     */
+    private void stringToGameBoard(String gameBoardString) {
+       String[] rows = gameBoardString.split(";");
+        for(int i = 0;i< rows.length;i++){
+            String[] entry = rows[i].split(",");
+            for(int j = 0; j < entry.length;j++){
+                gameBoard[i][j] = Integer.parseInt(entry[j]);
+            }
+        }
+    }
 }

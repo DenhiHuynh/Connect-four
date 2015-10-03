@@ -1,7 +1,9 @@
 package com.denhihuynh.connectfour;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,13 +13,14 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import constants.SharedPreferenceConstants;
 import fragments.StartScreenFragment;
 import interfaces.OnFragmentInteractionListener;
 
 public class MainActivity extends AppCompatActivity implements OnFragmentInteractionListener {
     public static final String SETUPGAME = "setupGame";
-    public static final String START = "start";
     public static final String RESUME = "resume";
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +30,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
         // Add the fragment to the 'fragment_container' FrameLayout
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, startScreenFragment).commit();
+        prefs = getSharedPreferences(
+                "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -64,11 +68,9 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
                 Intent setupIntent = new Intent(this, GameSetupActivity.class);
                 startActivity(setupIntent);
                 break;
-            case START:
-                Intent gameIntent = new Intent(this, GameActivity.class);
-                startActivity(gameIntent);
-                break;
             case RESUME:
+                Intent gameResumeIntent = new Intent(this, GameActivity.class);
+                startActivity(gameResumeIntent);
                 break;
         }
 

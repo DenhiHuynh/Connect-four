@@ -2,6 +2,7 @@ package fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.denhihuynh.connectfour.R;
 
 import java.util.ArrayList;
 
+import constants.SharedPreferenceConstants;
 import interfaces.OnFragmentInteractionListener;
 
 /**
@@ -21,6 +23,7 @@ import interfaces.OnFragmentInteractionListener;
  */
 public class StartScreenFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;
+    private SharedPreferences prefs;
 
     public StartScreenFragment() {
     }
@@ -29,11 +32,17 @@ public class StartScreenFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_start_screen, container, false);
-
+        prefs = getActivity().getSharedPreferences(
+                "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
         Button setupButton = (Button) root.findViewById(R.id.setupButton);
         Button resumeButton = (Button) root.findViewById(R.id.resumeButton);
         setupButton.setOnClickListener(this);
-        resumeButton.setOnClickListener(this);
+        boolean onGoingGameExists = prefs.getBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS,false);
+        if(onGoingGameExists){
+            resumeButton.setOnClickListener(this);
+        }else{
+            resumeButton.setAlpha(0.3f);
+        }
         return root;
     }
 

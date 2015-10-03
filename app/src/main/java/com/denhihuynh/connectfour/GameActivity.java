@@ -1,8 +1,11 @@
 package com.denhihuynh.connectfour;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import constants.SharedPreferenceConstants;
 import model.ConnectFour;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+    private final static String TAG = "GameActivity";
     final static long INTERVAL = 200;
     private TableLayout tableLayout;
     private ArrayList<TableRow> gameBoardTable;
@@ -28,27 +33,80 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private TextView currentPlayerText;
     private Button currentPlayerColor;
     private ArrayList<String> playerNames;
-    private int lastRow,lastCol;
+    private int lastRow, lastCol;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        gameBoardTable = new ArrayList<>();
-        tableLayout = (TableLayout) findViewById(R.id.gameTable);
         rows = 6;
         cols = 7;
-        //Using a normal 6x7 game board with two players.
-        connectFour = new ConnectFour(rows, cols, 2);
-        currentPlayer = 0;
+        gameBoardTable = new ArrayList<>();
+        tableLayout = (TableLayout) findViewById(R.id.gameTable);
         currentPlayerColor = (Button) findViewById(R.id.currentPlayerColorButton);
         currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            playerNames = extras.getStringArrayList(GameSetupActivity.PLAYERNAMES);
+        prefs = this.getSharedPreferences(
+                "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
+        boolean onGoingGameExists = prefs.getBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false);
+        addGameBoardRows();
+        if (onGoingGameExists) {
+            createResumedGame();
+        } else {
+            prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, true).apply();
+
+            //Using a normal 6x7 game board with two players.
+            connectFour = new ConnectFour(rows, cols, 2, prefs);
+            currentPlayer = 0;
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                playerNames = extras.getStringArrayList(GameSetupActivity.PLAYERNAMES);
+            }
         }
 
-        addGameBoardRows();
+    }
+
+    /**
+     * Restores a started game.
+     */
+    private void createResumedGame() {
+        //Using a normal 6x7 game board with two players.
+        connectFour = new ConnectFour(rows, cols, 2, prefs);
+        boolean successFullyRecreatedGame = connectFour.getGameInstance();
+        if (successFullyRecreatedGame) {
+            currentPlayer = prefs.getInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, 0);
+            if (currentPlayer == 0) {
+                currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_red);
+            } else {
+                currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_yellow);
+            }
+            currentPlayerText.setText(Integer.toString(currentPlayer + 1));
+            String playerOne = prefs.getString(SharedPreferenceConstants.PLAYERONENAME, null);
+            String playerTwo = prefs.getString(SharedPreferenceConstants.PLAYERTWONAME, null);
+            if (playerOne != null && playerTwo != null) {
+                playerNames = new ArrayList<>();
+                playerNames.add(playerOne);
+                playerNames.add(playerTwo);
+            } else {
+                //This should not happen. Debug message is shown in case of this happening.
+                Log.d(TAG, "Player names was null");
+            }
+        } else {
+            //This should not happen. Debug message is shown in case of this happening.
+            Log.d(TAG, "Connect four game was not created correctly");
+        }
+
+        int[][] gameBoard = connectFour.getGameBoard();
+        for(int i = 0; i < rows; i++){
+            for(int j = 0;j<cols;j++){
+                TableRow row = gameBoardTable.get(rows - 1 - i);
+                if(gameBoard[i][j] == 0){
+                    row.getChildAt(j).setBackgroundResource(R.drawable.rounded_corner_red);
+                }else if(gameBoard[i][j] == 1){
+                    row.getChildAt(j).setBackgroundResource(R.drawable.rounded_corner_yellow);
+                }
+            }
+        }
     }
 
 
@@ -138,10 +196,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final int action = connectFour.evaluateGame(lastRow, lastCol);
         switch (action) {
             case ConnectFour.FULLBOARD:
+                prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
                 Bundle extra = new Bundle();
-                extra.putStringArrayList(GameResultActivity.PLAYERNAMES,playerNames);
+                extra.putStringArrayList(GameResultActivity.PLAYERNAMES, playerNames);
                 extra.putString(GameResultActivity.RESULT, GameResultActivity.RESULTTIE);
-                Intent tieIntent = new Intent(this,GameResultActivity.class);
+                Intent tieIntent = new Intent(this, GameResultActivity.class);
                 tieIntent.putExtras(extra);
                 startActivity(tieIntent);
                 break;
@@ -160,15 +219,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             default: //This means we have a winner
+                prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
                 Bundle extras = new Bundle();
                 extras.putString(GameResultActivity.RESULT, GameResultActivity.RESULTWINNER);
-                extras.putStringArrayList(GameResultActivity.PLAYERNAMES,playerNames);
-                if(currentPlayer == 0){
-                    extras.putString(GameResultActivity.WINNERNAME,playerNames.get(0));
-                }else{
-                    extras.putString(GameResultActivity.WINNERNAME,playerNames.get(1));
+                extras.putStringArrayList(GameResultActivity.PLAYERNAMES, playerNames);
+                if (currentPlayer == 0) {
+                    extras.putString(GameResultActivity.WINNERNAME, playerNames.get(0));
+                } else {
+                    extras.putString(GameResultActivity.WINNERNAME, playerNames.get(1));
                 }
-                Intent winIntent = new Intent(this,GameResultActivity.class);
+                Intent winIntent = new Intent(this, GameResultActivity.class);
                 winIntent.putExtras(extras);
                 startActivity(winIntent);
                 break;
@@ -176,13 +236,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Saving game on back press.
+     */
     @Override
-    public void onBackPressed()
-    {
-        //TODO add savegameboard
-        Intent intent = new Intent(this,MainActivity.class);
+    public void onBackPressed() {
+        saveGameBoard();
+        Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    /**
+     * Saving game on onPause.
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveGameBoard();
+    }
+
+    /**
+     * Saves the current state of the game.
+     */
+    private void saveGameBoard() {
+        prefs.edit().putInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, currentPlayer).apply();
+        prefs.edit().putString(SharedPreferenceConstants.PLAYERONENAME, playerNames.get(0)).apply();
+        prefs.edit().putString(SharedPreferenceConstants.PLAYERTWONAME, playerNames.get(1)).apply();
+        connectFour.saveGameInstance();
     }
 
     /**

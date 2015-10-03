@@ -1,6 +1,8 @@
 package com.denhihuynh.connectfour;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,14 +16,19 @@ import com.denhihuynh.connectfour.R;
 
 import java.util.ArrayList;
 
+import constants.SharedPreferenceConstants;
+
 public class GameSetupActivity extends AppCompatActivity implements View.OnClickListener {
     public final static String PLAYERNAMES = "playerNames";
     private EditText playerOneName, playerTwoName;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_setup);
+        prefs = getSharedPreferences(
+                "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
         Button startButton = (Button) findViewById(R.id.startButton);
         playerOneName = (EditText) findViewById(R.id.edittext_firstplayer);
         playerTwoName = (EditText) findViewById(R.id.edittext_secondplayer);
@@ -68,6 +75,7 @@ public class GameSetupActivity extends AppCompatActivity implements View.OnClick
         ArrayList<String> playerNames = new ArrayList<>();
         playerNames.add(firstPlayer);
         playerNames.add(secondPlayer);
+        prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS,false).apply();
         Bundle extras = new Bundle();
         extras.putStringArrayList(PLAYERNAMES, playerNames);
         Intent intent = new Intent(this,GameActivity.class);
