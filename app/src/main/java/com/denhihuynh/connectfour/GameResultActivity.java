@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,6 +28,9 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
     private HighScoresDataSource dataSource;
     private SharedPreferences prefs;
     private String[] audits;
+    private Button setupButton,rematchButton;
+    private TextView bigResultTextView,resultTextView;
+    private ListView auditList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +38,11 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_game_result);
         prefs = this.getSharedPreferences(
                 "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
-        Bundle extras = getIntent().getExtras();
+
         dataSource = new HighScoresDataSource(this);
         dataSource.open();
-        Button setupButton = (Button) findViewById(R.id.setupButton);
-        Button rematchButton = (Button) findViewById(R.id.rematchButton);
-        setupButton.setOnClickListener(this);
-        rematchButton.setOnClickListener(this);
-        TextView bigResultTextView = (TextView) findViewById(R.id.gameResultBigText);
-        TextView resultTextView = (TextView) findViewById(R.id.gameResultText);
-        ListView auditList = (ListView) findViewById(R.id.auditList);
-        String auditString = prefs.getString(SharedPreferenceConstants.AUDITLOG,null);
+        setUpViews();
+        String auditString = prefs.getString(SharedPreferenceConstants.AUDITLOG, null);
         if(auditString != null){
             audits = auditString.split("\\r?\\n");
         }else{
@@ -56,6 +51,27 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 R.layout.row_layout_audit_log,R.id.textView,audits);
         auditList.setAdapter(adapter);
+        displayInfo();
+    }
+
+    /**
+     * Setup for views
+     */
+    private void setUpViews() {
+        setupButton = (Button) findViewById(R.id.setupButton);
+        rematchButton = (Button) findViewById(R.id.rematchButton);
+        setupButton.setOnClickListener(this);
+        rematchButton.setOnClickListener(this);
+        bigResultTextView = (TextView) findViewById(R.id.gameResultBigText);
+        resultTextView = (TextView) findViewById(R.id.gameResultText);
+        auditList = (ListView) findViewById(R.id.auditList);
+    }
+
+    /**
+     * Displays the correct info in the different views.
+     */
+    private void displayInfo() {
+        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             playerNames = extras.getStringArrayList(PLAYERNAMES);
             String result = extras.getString(RESULT);
@@ -78,8 +94,8 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
                     }
                     break;
                 case RESULTTIE:
-                    bigResultTextView.setText("Draw");
-                    String drawText = "Game between " + playerNames.get(0) + " and " + playerNames.get(1) + " has ended in a draw.";
+                    bigResultTextView.setText(R.string.gameresultactivity);
+                    String drawText = "between " + playerNames.get(0) + " and " + playerNames.get(1) + ".";
                     resultTextView.setText(drawText);
                     dataSource.addHighScore(playerNames.get(0), HighScoresDataSource.DRAW);
                     dataSource.addHighScore(playerNames.get(1), HighScoresDataSource.DRAW);
@@ -92,28 +108,10 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         dataSource.close();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_finished_game, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+    /**
+     * Handles if game should restart or setting up a new game.
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -131,6 +129,9 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
+    /**
+     * Backpress takes the user back to Mainactivity.
+     */
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);

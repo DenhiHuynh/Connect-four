@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by Hans-Johan on 2015-10-03.
+ * Object containing the scores for a specific player. Used in database.
  */
 public class HighScore implements Comparable<HighScore>{
     private String playerName;
@@ -33,6 +33,12 @@ public class HighScore implements Comparable<HighScore>{
         return losses;
     }
 
+    /**
+     * Compares this highscore against another one. First checks the number of wins.
+     * If equal, it checks draws and at last which player has lost fewest games.
+     * @param another the other highscore to compare to.
+     * @return
+     */
     @Override
     public int compareTo(HighScore another) {
         if(this.wins - another.wins == 0){

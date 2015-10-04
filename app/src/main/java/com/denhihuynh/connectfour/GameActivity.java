@@ -21,6 +21,9 @@ import java.util.TimerTask;
 import constants.SharedPreferenceConstants;
 import model.ConnectFour;
 
+/**
+ * This activity handles the game animations and gameplay.
+ */
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private final static String TAG = "GameActivity";
     final static long INTERVAL = 200;

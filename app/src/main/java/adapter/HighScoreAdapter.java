@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -14,7 +13,9 @@ import java.util.List;
 
 import model.HighScore;
 
-
+/**
+ * Adapter to populate the highscore listview.
+ */
 public class HighScoreAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<HighScore> highScores;
@@ -39,6 +40,13 @@ public class HighScoreAdapter extends BaseAdapter {
         return position;
     }
 
+    /**
+     * Creating the rowlayout for each entry in highscores.
+     * @param position which position in the highscores list to populate.
+     * @param convertView which view to inflate as row layout.
+     * @param parent the view to insert row layout into.
+     * @return
+     */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;

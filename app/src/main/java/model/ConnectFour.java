@@ -2,8 +2,6 @@ package model;
 
 import android.content.SharedPreferences;
 
-import java.util.ArrayList;
-
 import constants.SharedPreferenceConstants;
 
 /**
@@ -88,15 +86,42 @@ public class ConnectFour {
      */
     private boolean checkForWin(int r, int c) {
         int nDirs = 8;
-        int xInc[] = {1, 1, 0, -1, -1, -1, 0, 1};
-        int yInc[] = {0, 1, 1, 1, 0, -1, -1, -1};
+        int xInc[] = {1, -1, 0, 0, 1, -1, 1, -1};
+        int yInc[] = {0, 0, 1, -1, 1, -1, -1, 1};
 
+        //Check for four in line in a specific direction
         for (int i = 0; i < nDirs; i++) {
             if (winInDir(r, c, xInc[i], yInc[i])) {
                 return true;
             }
         }
+
+        //Check for four in line combined in two directions
+        for(int j = 0; j < nDirs; j += 2){
+            if (nbrInDir(r, c, xInc[j], yInc[j]) + nbrInDir(r, c, xInc[j+1], yInc[j+1]) >= 5) {//5 because point gameBoard[r][c] will be counted twice
+                return true;
+            }
+        }
         return false;
+    }
+
+    /**
+     * Checks the number of disc in order which belong to a user.
+     *
+     * @param r
+     * @param c
+     * @param rInc
+     * @param cInc
+     * @return
+     */
+    int nbrInDir(int r, int c, int rInc, int cInc) {
+        int inLine = 0;
+        while (inBound(r, c) && gameBoard[r][c] == currentPlayer) {
+            inLine++;
+            r += rInc;
+            c += cInc;
+        }
+        return inLine;
     }
 
     /**
@@ -140,18 +165,18 @@ public class ConnectFour {
     /**
      * Creates a previously saved game instance.
      */
-    public boolean getGameInstance(){
+    public boolean getGameInstance() {
         currentPlayer = prefs.getInt(SharedPreferenceConstants.CONNECTFOURCURRENTPLAYER, 0);
         String gameBoardString = prefs.getString(SharedPreferenceConstants.CONNECTFOURGAMEBOARD, null);
-        if(gameBoardString != null){
+        if (gameBoardString != null) {
             stringToGameBoard(gameBoardString);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public int[][] getGameBoard(){
+    public int[][] getGameBoard() {
         return gameBoard;
     }
 
@@ -178,10 +203,10 @@ public class ConnectFour {
      * @return
      */
     private void stringToGameBoard(String gameBoardString) {
-       String[] rows = gameBoardString.split(";");
-        for(int i = 0;i< rows.length;i++){
+        String[] rows = gameBoardString.split(";");
+        for (int i = 0; i < rows.length; i++) {
             String[] entry = rows[i].split(",");
-            for(int j = 0; j < entry.length;j++){
+            for (int j = 0; j < entry.length; j++) {
                 gameBoard[i][j] = Integer.parseInt(entry[j]);
             }
         }

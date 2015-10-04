@@ -19,7 +19,7 @@ import constants.SharedPreferenceConstants;
 import interfaces.OnFragmentInteractionListener;
 
 /**
- * A placeholder fragment containing a simple view.
+ * This fragment contains the buttons shown in Mainactivity.
  */
 public class StartScreenButtonFragment extends Fragment implements View.OnClickListener {
     private OnFragmentInteractionListener mListener;

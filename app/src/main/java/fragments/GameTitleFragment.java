@@ -1,15 +1,15 @@
 package fragments;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.denhihuynh.connectfour.R;
 
+/**
+ * This fragments shows the title in Startscreen(MainActivity) when there is no record for highscores.
+ */
 public class GameTitleFragment extends Fragment {
 
     public static GameTitleFragment newInstance() {
