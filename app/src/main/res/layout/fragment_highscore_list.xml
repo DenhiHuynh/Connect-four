@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blue_500"
-    android:orientation="vertical"
     tools:context="fragments.HighScoreFragment">
 
     <TextView
+        android:id="@+id/highScoreTitle"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/fragment_start_screen_high_score"
         android:textColor="@color/white"
@@ -19,8 +18,9 @@
     <ListView
         android:id="@+id/highScoreList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/highScoreTitle"
         android:layout_marginBottom="5dp"
         android:background="@drawable/rounded_corner"/>
 
@@ -30,4 +30,4 @@
         android:layout_height="match_parent"
         android:gravity="center" />
 
-</LinearLayout>
+</RelativeLayout>

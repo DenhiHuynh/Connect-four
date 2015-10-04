@@ -66,6 +66,7 @@ public class HighScoresDataSource {
                 null, null, null);
 
         if (cursor.getCount() > 0) { //There is a player called playerName
+            cursor.moveToFirst();
             HighScore highScore = cursorToHighScore(cursor);
             ContentValues values = new ContentValues();
             int win = highScore.getWins();
@@ -87,7 +88,7 @@ public class HighScoresDataSource {
             }
 
             // Which row to update, based on the ID
-            String selection = MySQLiteHelper.COLUMN_PLAYERNAME + " = ";
+            String selection = MySQLiteHelper.COLUMN_PLAYERNAME + " = ?";
             String[] selectionArgs = {playerName};
 
             int count = database.update(
@@ -139,7 +140,10 @@ public class HighScoresDataSource {
         }
         // make sure to close the cursor
         cursor.close();
+        //Sorting in ascending order, we want descending order.
         Collections.sort(highScores);
+        //Reversing the list will give descending order.
+        Collections.reverse(highScores);
         return highScores;
     }
 

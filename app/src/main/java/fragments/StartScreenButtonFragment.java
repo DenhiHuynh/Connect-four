@@ -25,6 +25,11 @@ public class StartScreenButtonFragment extends Fragment implements View.OnClickL
     private OnFragmentInteractionListener mListener;
     private SharedPreferences prefs;
 
+    public static StartScreenButtonFragment newInstance() {
+        StartScreenButtonFragment fragment = new StartScreenButtonFragment();
+        return fragment;
+    }
+
     public StartScreenButtonFragment() {
     }
 

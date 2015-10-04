@@ -12,7 +12,9 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import constants.SharedPreferenceConstants;
 import fragments.GameTitleFragment;
+import fragments.HighScoreFragment;
 import fragments.StartScreenButtonFragment;
 import interfaces.OnFragmentInteractionListener;
 
@@ -25,15 +27,23 @@ public class MainActivity extends AppCompatActivity implements OnFragmentInterac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, GameTitleFragment.newInstance()).commit();
-        StartScreenButtonFragment startScreenButtonFragment = new StartScreenButtonFragment();
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.button_container, startScreenButtonFragment).commit();
         prefs = getSharedPreferences(
                 "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
+
+        boolean highScoresExist = prefs.getBoolean(SharedPreferenceConstants.HIGHSCOREEXISTS,false);
+        if(highScoresExist){
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, HighScoreFragment.newInstance()).commit();
+        }else{
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, GameTitleFragment.newInstance()).commit();
+        }
+        // Add the fragment to the 'fragment_container' FrameLayout
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.button_container, StartScreenButtonFragment.newInstance()).commit();
+
     }
 
     @Override

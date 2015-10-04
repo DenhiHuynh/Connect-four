@@ -35,6 +35,17 @@ public class HighScore implements Comparable<HighScore>{
 
     @Override
     public int compareTo(HighScore another) {
+        if(this.wins - another.wins == 0){
+            if(this.draws - another.draws == 0){
+                if(this.losses - another.losses == 0){
+                    return 0;
+                }else{
+                    return another.losses - this.losses;
+                }
+            }else{
+                return this.draws - another.draws;
+            }
+        }
         return this.wins - another.wins;
     }
 }

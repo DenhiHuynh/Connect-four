@@ -10,6 +10,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.denhihuynh.connectfour.R;
@@ -17,6 +18,7 @@ import com.denhihuynh.connectfour.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import adapter.HighScoreAdapter;
 import database.HighScoresDataSource;
 import model.HighScore;
 
@@ -25,13 +27,13 @@ public class HighScoreFragment extends Fragment {
     /**
      * The fragment's ListView/GridView.
      */
-    private AbsListView mListView;
+    private ListView mListView;
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private ListAdapter mAdapter;
+    private HighScoreAdapter mAdapter;
 
     private HighScoresDataSource dataSource;
 
@@ -53,9 +55,7 @@ public class HighScoreFragment extends Fragment {
         dataSource = new HighScoresDataSource(getContext());
         dataSource.open();
         List<HighScore> highScores = dataSource.getAllHighScores();
-//        // TODO: Change Adapter to display your content
-//        mAdapter = new ArrayAdapter<HighScore>(getActivity(),
-//                android.R.layout.simple_list_item_1, android.R.id.text1, highScores);
+        mAdapter = new HighScoreAdapter(getContext(), highScores);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class HighScoreFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_highscore, container, false);
 
         // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
+        mListView = (ListView) view.findViewById(R.id.highScoreList);
         mListView.setAdapter(mAdapter);
 
         return view;

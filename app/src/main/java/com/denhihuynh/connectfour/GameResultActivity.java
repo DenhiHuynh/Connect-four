@@ -1,6 +1,8 @@
 package com.denhihuynh.connectfour;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 
+import constants.SharedPreferenceConstants;
 import database.HighScoresDataSource;
 
 public class GameResultActivity extends AppCompatActivity implements View.OnClickListener {
@@ -24,12 +27,15 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
     public static final String PLAYERNAMES = "playerNames";
     private ArrayList<String> playerNames;
     private HighScoresDataSource dataSource;
+    private SharedPreferences prefs;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_result);
+        prefs = this.getSharedPreferences(
+                "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
         Bundle extras = getIntent().getExtras();
         dataSource = new HighScoresDataSource(this);
         dataSource.open();
@@ -68,9 +74,9 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
                     dataSource.addHighScore(playerNames.get(1), HighScoresDataSource.DRAW);
                     break;
             }
-
+            prefs.edit().putBoolean(SharedPreferenceConstants.HIGHSCOREEXISTS,true).apply();
         } else {
-            Log.e(TAG, "GameResultactivity did not get playerNames");
+            Log.e(TAG, "GameResultActivity did not get playerNames");
         }
         dataSource.close();
     }

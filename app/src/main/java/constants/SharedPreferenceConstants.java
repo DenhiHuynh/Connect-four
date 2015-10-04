@@ -10,5 +10,6 @@ public class SharedPreferenceConstants {
     public static String GAMEACTIVITYCURRENTPLAYER = "gameActivityCurrentPlayer";
     public static String PLAYERONENAME = "playerOneName";
     public static String PLAYERTWONAME = "playerTwoName";
+    public static String HIGHSCOREEXISTS = "highScoreExists";
 
 }
