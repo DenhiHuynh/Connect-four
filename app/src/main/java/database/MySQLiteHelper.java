@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class MySQLiteHelper extends SQLiteOpenHelper{
+public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public static final String TABLE_HIGHSCORES = "highScores";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_PLAYERNAME = "playerName";
-    public static final String COLUMN_WINS= "wins";
+    public static final String COLUMN_WINS = "wins";
     public static final String COLUMN_DRAWS = "draws";
     public static final String COLUMN_LOSSES = "losses";
 

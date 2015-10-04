@@ -23,5 +23,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="game_title_text">Connect 4</string>
+    <string name="activity_game_result">Moves</string>
+    <string name="game_result_winner_big">"Winner "</string>
 
 </resources>

@@ -6,11 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import org.w3c.dom.Comment;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -96,7 +92,7 @@ public class HighScoresDataSource {
                     values,
                     selection,
                     selectionArgs);
-        }else{ //There was not a player called playerName. Create a new player highscore.
+        } else { //There was not a player called playerName. Create a new player highscore.
             ContentValues values = new ContentValues();
             int win = 0;
             int draw = 0;
@@ -112,7 +108,7 @@ public class HighScoresDataSource {
                     loss++;
                     break;
             }
-            values.put(MySQLiteHelper.COLUMN_PLAYERNAME,playerName);
+            values.put(MySQLiteHelper.COLUMN_PLAYERNAME, playerName);
             values.put(MySQLiteHelper.COLUMN_WINS, win);
             values.put(MySQLiteHelper.COLUMN_DRAWS, draw);
             values.put(MySQLiteHelper.COLUMN_LOSSES, loss);
@@ -124,6 +120,7 @@ public class HighScoresDataSource {
 
     /**
      * Gets all highscore from database and sorts them after wins.
+     *
      * @return the list of highscores for all players.
      */
     public List<HighScore> getAllHighScores() {
@@ -149,6 +146,7 @@ public class HighScoresDataSource {
 
     /**
      * Creates a HighScore object from the cursor values.
+     *
      * @param cursor the cursor to extract information from.
      * @return a HighScore object containt the highscore info for one player.
      */

@@ -42,10 +42,10 @@ public class StartScreenButtonFragment extends Fragment implements View.OnClickL
         Button setupButton = (Button) root.findViewById(R.id.setupButton);
         Button resumeButton = (Button) root.findViewById(R.id.resumeButton);
         setupButton.setOnClickListener(this);
-        boolean onGoingGameExists = prefs.getBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS,false);
-        if(onGoingGameExists){
+        boolean onGoingGameExists = prefs.getBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false);
+        if (onGoingGameExists) {
             resumeButton.setOnClickListener(this);
-        }else{
+        } else {
             resumeButton.setAlpha(0.3f);
         }
         return root;
@@ -53,6 +53,7 @@ public class StartScreenButtonFragment extends Fragment implements View.OnClickL
 
     /**
      * Switches fragment when button is pressed.
+     *
      * @param v view pressed.
      */
     @Override
@@ -69,12 +70,13 @@ public class StartScreenButtonFragment extends Fragment implements View.OnClickL
         }
         if (mListener != null) {
             //Calling Mainactivity in order to switch fragment.
-            mListener.onFragmentInteraction(command,extras);
+            mListener.onFragmentInteraction(command, extras);
         }
     }
 
     /**
      * Connecting Mainactivity's onFragmentInteraction method with fragment in onAttach.
+     *
      * @param context
      */
     @Override

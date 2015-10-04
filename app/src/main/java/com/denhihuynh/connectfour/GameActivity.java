@@ -26,6 +26,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     final static long INTERVAL = 200;
     private TableLayout tableLayout;
     private ArrayList<TableRow> gameBoardTable;
+    private StringBuilder auditLog;
     private DiscDropper discDropper;
     private ConnectFour connectFour;
     private int rows, cols;
@@ -43,6 +44,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         rows = 6;
         cols = 7;
         gameBoardTable = new ArrayList<>();
+        auditLog = new StringBuilder();
         tableLayout = (TableLayout) findViewById(R.id.gameTable);
         currentPlayerColor = (Button) findViewById(R.id.currentPlayerColorButton);
         currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
@@ -72,6 +74,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void createResumedGame() {
         //Using a normal 6x7 game board with two players.
         connectFour = new ConnectFour(rows, cols, 2, prefs);
+        String audits = prefs.getString(SharedPreferenceConstants.AUDITLOG, null);
+        if (audits != null) {
+            auditLog.append(audits);
+        } else {
+            Log.d(TAG, "Audit log was null.");
+        }
         boolean successFullyRecreatedGame = connectFour.getGameInstance();
         if (successFullyRecreatedGame) {
             currentPlayer = prefs.getInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, 0);
@@ -97,12 +105,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         int[][] gameBoard = connectFour.getGameBoard();
-        for(int i = 0; i < rows; i++){
-            for(int j = 0;j<cols;j++){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 TableRow row = gameBoardTable.get(rows - 1 - i);
-                if(gameBoard[i][j] == 0){
+                if (gameBoard[i][j] == 0) {
                     row.getChildAt(j).setBackgroundResource(R.drawable.rounded_corner_red);
-                }else if(gameBoard[i][j] == 1){
+                } else if (gameBoard[i][j] == 1) {
                     row.getChildAt(j).setBackgroundResource(R.drawable.rounded_corner_yellow);
                 }
             }
@@ -171,6 +179,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             int lastAddedRow = connectFour.addToColumn(col);
             lastCol = col;
             lastRow = lastAddedRow;
+            String playerName;
+            if (currentPlayer == 0) {
+                playerName = playerNames.get(0);
+            } else {
+                playerName = playerNames.get(1);
+            }
+            //Using 1 indexing on row and column in audit log.
+            String audit = "Player " + playerName + " added disc to row: " + (lastRow + 1) + ", column: " + (lastCol + 1) + ".\n";
+            auditLog.append(audit);
             int destinationRowIndex = rows - 1 - lastAddedRow;
             if (lastAddedRow != ConnectFour.COLISFULL) {
                 if (currentPlayer == 0) {
@@ -196,6 +213,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final int action = connectFour.evaluateGame(lastRow, lastCol);
         switch (action) {
             case ConnectFour.FULLBOARD:
+                prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
                 prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
                 Bundle extra = new Bundle();
                 extra.putStringArrayList(GameResultActivity.PLAYERNAMES, playerNames);
@@ -219,6 +237,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             default: //This means we have a winner
+                prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
                 prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
                 Bundle extras = new Bundle();
                 extras.putString(GameResultActivity.RESULT, GameResultActivity.RESULTWINNER);
@@ -260,6 +279,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * Saves the current state of the game.
      */
     private void saveGameBoard() {
+        prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
         prefs.edit().putInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, currentPlayer).apply();
         prefs.edit().putString(SharedPreferenceConstants.PLAYERONENAME, playerNames.get(0)).apply();
         prefs.edit().putString(SharedPreferenceConstants.PLAYERTWONAME, playerNames.get(1)).apply();

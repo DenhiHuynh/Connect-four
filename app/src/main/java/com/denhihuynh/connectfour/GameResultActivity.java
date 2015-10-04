@@ -3,16 +3,17 @@ package com.denhihuynh.connectfour;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import constants.SharedPreferenceConstants;
@@ -28,7 +29,7 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<String> playerNames;
     private HighScoresDataSource dataSource;
     private SharedPreferences prefs;
-
+    private String[] audits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +46,22 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
         rematchButton.setOnClickListener(this);
         TextView bigResultTextView = (TextView) findViewById(R.id.gameResultBigText);
         TextView resultTextView = (TextView) findViewById(R.id.gameResultText);
+        ListView auditList = (ListView) findViewById(R.id.auditList);
+        String auditString = prefs.getString(SharedPreferenceConstants.AUDITLOG,null);
+        if(auditString != null){
+            audits = auditString.split("\\r?\\n");
+        }else{
+            audits = new String[1];
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                R.layout.row_layout_audit_log,R.id.textView,audits);
+        auditList.setAdapter(adapter);
         if (extras != null) {
             playerNames = extras.getStringArrayList(PLAYERNAMES);
             String result = extras.getString(RESULT);
             switch (result) {
                 case RESULTWINNER:
-                    bigResultTextView.setText("Winner");
+                    bigResultTextView.setText(R.string.game_result_winner_big);
                     String winner = extras.getString(RESULTWINNER);
                     String winText = "Congratulations, " + winner + " has won.";
                     resultTextView.setText(winText);
@@ -74,7 +85,7 @@ public class GameResultActivity extends AppCompatActivity implements View.OnClic
                     dataSource.addHighScore(playerNames.get(1), HighScoresDataSource.DRAW);
                     break;
             }
-            prefs.edit().putBoolean(SharedPreferenceConstants.HIGHSCOREEXISTS,true).apply();
+            prefs.edit().putBoolean(SharedPreferenceConstants.HIGHSCOREEXISTS, true).apply();
         } else {
             Log.e(TAG, "GameResultActivity did not get playerNames");
         }

@@ -28,7 +28,7 @@
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:hint="@string/activity_game_setup_first_player_name"
-        android:maxLength="15"
+        android:maxLength="10"
         android:textSize="25sp" />
 
     <Button
@@ -49,7 +49,7 @@
         android:textColor="@color/white"
         android:layout_below="@+id/edittext_firstplayer"
         android:hint="@string/activity_game_setup_second_player_name"
-        android:maxLength="15"
+        android:maxLength="10"
         android:textSize="25sp" />
 
     <Button
