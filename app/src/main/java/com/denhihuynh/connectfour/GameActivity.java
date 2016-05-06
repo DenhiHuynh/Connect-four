@@ -26,7 +26,7 @@ import model.ConnectFour;
  */
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
     private final static String TAG = "GameActivity";
-    final static long INTERVAL = 200;
+    final static long INTERVAL = 100;
     private TableLayout tableLayout;
     private ArrayList<TableRow> gameBoardTable;
     private StringBuilder auditLog;
@@ -35,7 +35,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int rows, cols;
     private int currentPlayer;
     private TextView currentPlayerText;
-    private Button currentPlayerColor;
     private ArrayList<String> playerNames;
     private int lastRow, lastCol;
     private SharedPreferences prefs;
@@ -49,8 +48,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gameBoardTable = new ArrayList<>();
         auditLog = new StringBuilder();
         tableLayout = (TableLayout) findViewById(R.id.gameTable);
-        currentPlayerColor = (Button) findViewById(R.id.currentPlayerColorButton);
-        currentPlayerText = (TextView) findViewById(R.id.currentPlayerNumberText);
+        currentPlayerText = (TextView) findViewById(R.id.currentPlayerName);
         prefs = this.getSharedPreferences(
                 "com.denhihuynh.connectfour", Context.MODE_PRIVATE);
         boolean onGoingGameExists = prefs.getBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false);
@@ -67,6 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             if (extras != null) {
                 playerNames = extras.getStringArrayList(GameSetupActivity.PLAYERNAMES);
             }
+            currentPlayerText.setText(playerNames.get(0));
         }
 
     }
@@ -85,15 +84,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         boolean successFullyRecreatedGame = connectFour.getGameInstance();
         if (successFullyRecreatedGame) {
-            currentPlayer = prefs.getInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, 0);
-            if (currentPlayer == 0) {
-                currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_red);
-            } else {
-                currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_yellow);
-            }
-            currentPlayerText.setText(Integer.toString(currentPlayer + 1));
             String playerOne = prefs.getString(SharedPreferenceConstants.PLAYERONENAME, null);
             String playerTwo = prefs.getString(SharedPreferenceConstants.PLAYERTWONAME, null);
+            currentPlayer = prefs.getInt(SharedPreferenceConstants.GAMEACTIVITYCURRENTPLAYER, 0);
+            if (currentPlayer == 0) {
+                currentPlayerText.setText(playerOne);
+            } else {
+                currentPlayerText.setText(playerTwo);
+            }
             if (playerOne != null && playerTwo != null) {
                 playerNames = new ArrayList<>();
                 playerNames.add(playerOne);
@@ -134,12 +132,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Button col4 = (Button) rowView.getChildAt(3);
             Button col5 = (Button) rowView.getChildAt(4);
             Button col6 = (Button) rowView.getChildAt(5);
+            Button col7 = (Button) rowView.getChildAt(6);
             col1.setOnClickListener(this);
             col2.setOnClickListener(this);
             col3.setOnClickListener(this);
             col4.setOnClickListener(this);
             col5.setOnClickListener(this);
             col6.setOnClickListener(this);
+            col7.setOnClickListener(this);
             tableLayout.addView(rowView);
             gameBoardTable.add(rowView);
         }
@@ -167,6 +167,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_column_6:
                 col = 5;
+                break;
+            case R.id.button_column_7:
+                col = 6;
                 break;
         }
         dropDisc(col);
@@ -230,11 +233,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void run() {
                         currentPlayer = (currentPlayer + 1) % 2;
-                        currentPlayerText.setText(Integer.toString(currentPlayer + 1));
+
                         if (currentPlayer == 0) {
-                            currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_red);
+                            currentPlayerText.setText(playerNames.get(0));
                         } else {
-                            currentPlayerColor.setBackgroundResource(R.drawable.rounded_corner_yellow);
+                            currentPlayerText.setText(playerNames.get(1));
                         }
                     }
                 });
@@ -342,11 +345,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         public void stop() {
             timerTask.cancel();
             evaluateGame();
-            if (rowIndex < 6 && rowIndex < destinationRowIndex)
+            rowIndex = 0;
+            while(rowIndex < 6 && rowIndex < destinationRowIndex){
                 gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
-
-            if (rowIndex < 5 && rowIndex < destinationRowIndex - 1)
-                gameBoardTable.get(rowIndex + 1).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
+                rowIndex++;
+            }
 
             gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);
         }

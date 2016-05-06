@@ -15,8 +15,7 @@
     <string name="activity_game_setup_second_player_name">Second player name</string>
     <string name="activity_game_setup_first_player_name">First player name</string>
     <string name="activity_game_setup_setup_game">Setup game</string>
-    <string name="activity_game_start_player_number">1</string>
-    <string name="activity_game_start_player_text">Player:</string>
+    <string name="activity_game_turn_text">\'s turn</string>
     <string name="activity_game_result_rematch">Rematch</string>
     <string name="quit">Really quit?</string>
     <string name="really_quit">Are you sure you want to quit?</string>

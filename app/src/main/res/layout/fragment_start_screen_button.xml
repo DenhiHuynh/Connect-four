@@ -5,7 +5,7 @@
     android:background="@color/blue_500"
     android:orientation="horizontal"
     android:weightSum="2"
-    tools:context="se.umu.dehu0004.greed.StartActivity">
+    tools:context="com.denhihuynh.connectfour.MainActivity">
 
     <Button
         android:id="@+id/setupButton"
@@ -14,6 +14,7 @@
         android:layout_margin="5dp"
         android:layout_weight="1"
         android:background="@drawable/rounded_corner_button"
+        android:fontFamily="sans-serif-thin"
         android:text="@string/fragment_start_screen_start_new_game"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/white"
@@ -26,6 +27,7 @@
         android:layout_margin="5dp"
         android:layout_weight="1"
         android:background="@drawable/rounded_corner_button"
+        android:fontFamily="sans-serif-thin"
         android:text="@string/fragment_start_screen_resume_game"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/white"

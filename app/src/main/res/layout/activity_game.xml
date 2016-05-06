@@ -11,46 +11,31 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TableLayout
-            android:id="@+id/gameTable"
-            android:layout_marginTop="10dp"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="6" />
+        <TextView
+            android:id="@+id/currentPlayerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:fontFamily="sans-serif-thin"
+            android:text="@string/activity_game_turn_text"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="center_horizontal"
-                android:text="@string/activity_game_start_player_text"
-                android:textSize="20sp"
-                android:textColor="@color/white" />
 
-            <TextView
-                android:id="@+id/currentPlayerNumberText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:gravity="center_horizontal"
-                android:text="@string/activity_game_start_player_number"
-                android:textColor="@color/white"
-                android:textSize="25sp" />
-
-            <Button
-                android:id="@+id/currentPlayerColorButton"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="2.5dp"
-                android:background="@drawable/rounded_corner_red"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
     </LinearLayout>
 
+    <TableLayout
+        android:id="@+id/gameTable"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </LinearLayout>

@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:fontFamily="sans-serif-thin"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/fragment_start_screen_high_score"
         android:textColor="@color/white"
@@ -28,6 +29,7 @@
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fontFamily="sans-serif-thin"
         android:gravity="center" />
 
 </LinearLayout>

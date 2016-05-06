@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/game_title_text"
+        android:fontFamily="sans-serif-thin"
         android:textColor="@color/white"
         android:textSize="70sp" />
 
