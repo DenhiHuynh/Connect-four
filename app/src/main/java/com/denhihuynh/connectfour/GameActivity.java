@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import constants.SharedPreferenceConstants;
 import fragments.ResultFragment;
 import model.ConnectFour;
+import model.Position;
 
 /**
  * This activity handles the game animations and gameplay.
@@ -41,7 +42,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int lastRow, lastCol;
     private SharedPreferences prefs;
     private boolean finishedGame;
-    private Button col1,col2,col3,col4,col5,col6,col7;
+    private Button col1, col2, col3, col4, col5, col6, col7;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,7 +154,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(!finishedGame){
+        if (!finishedGame) {
             int col = 0;
             switch (v.getId()) {
                 case R.id.button_column_1:
@@ -257,9 +259,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     winner = playerNames.get(1);
                 }
+                ArrayList<Position> winPositions = connectFour.getWinPosition();
+                final int winnerDrawable = currentPlayer == 0 ? R.drawable.rounded_corner_red_win : R.drawable.rounded_corner_yellow_win;
+                for (Position p : winPositions) {
+                    final int row = rows - 1 - p.getRow();
+                    final int col = p.getCol();
+                    GameActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameBoardTable.get(row).getChildAt(col).setBackgroundResource(winnerDrawable);
+                        }
+                    });
+
+                }
+
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .setCustomAnimations(R.anim.winscreenanim,android.R.anim.fade_out)
+                        .setCustomAnimations(R.anim.result_screen_anim_in, R.anim.result_screen_anim_out)
                         .add(R.id.game_Container, ResultFragment.newInstance(ResultFragment.RESULTWINNER, playerNames, winner)).commit();
 
                 break;
@@ -323,7 +339,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    if (rowIndex < destinationRowIndex && destinationRowIndex >= 0) {
+                    if (rowIndex < destinationRowIndex && destinationRowIndex >= 0 && !finishedGame) {
                         GameActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -361,8 +377,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
                 rowIndex++;
             }
-
-            gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);
+            if (!finishedGame)
+                gameBoardTable.get(destinationRowIndex).getChildAt(col).setBackgroundResource(drawableId);
         }
 
         /**

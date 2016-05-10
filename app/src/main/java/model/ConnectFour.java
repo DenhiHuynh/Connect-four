@@ -2,6 +2,8 @@ package model;
 
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+
 import constants.SharedPreferenceConstants;
 
 /**
@@ -17,7 +19,11 @@ public class ConnectFour {
     private int[][] gameBoard;
     private final int rows, cols, nbrOfPlayers;
     private int currentPlayer;
+    private int winRow, winCol;
 
+    private int xInc[] = {1, -1, 0, 0, 1, -1, 1, -1};
+    private int yInc[] = {0, 0, 1, -1, 1, -1, -1, 1};
+    private int nDirs = 8;
     private SharedPreferences prefs;
 
     public ConnectFour(int rows, int cols, int nbrOfPlayers, SharedPreferences prefs) {
@@ -78,6 +84,54 @@ public class ConnectFour {
     }
 
     /**
+     * Gets all winning positions for the last played game.
+     *
+     * @return a list of win positions.
+     */
+    public ArrayList<Position> getWinPosition() {
+        ArrayList<Position> winPositions = new ArrayList<>();
+        for (int i = 0; i < nDirs; i++) {
+            if (winInDir(winRow, winCol, xInc[i], yInc[i])) {
+                int r = winRow;
+                int c = winCol;
+                winPositions.add(new Position(winRow, winCol));
+                while (inBound(r, c) && gameBoard[r][c] == currentPlayer) {
+                    r += xInc[i];
+                    c += yInc[i];
+                    if(inBound(r, c) && gameBoard[r][c] == currentPlayer){
+                        winPositions.add(new Position(r, c));
+                    }
+                }
+            }
+        }
+
+        //Check for four in line combined in two directions
+        for (int j = 0; j < nDirs; j += 2) {
+            if (nbrInDir(winRow, winCol, xInc[j], yInc[j]) + nbrInDir(winRow, winCol, xInc[j + 1], yInc[j + 1]) >= 5) {//5 because point gameBoard[r][c] will be counted twice
+                int r1 = winRow;
+                int c1 = winCol;
+                int r2 = winRow;
+                int c2 = winCol;
+                while (inBound(r1, c1) && gameBoard[r1][c1] == currentPlayer) {
+                    r1 += xInc[j];
+                    c1 += yInc[j];
+                    if (inBound(r1, c1) && gameBoard[r1][c1] == currentPlayer) {
+                        winPositions.add(new Position(r1, c1));
+                    }
+                }
+                while (inBound(r2, c2) && gameBoard[r2][c2] == currentPlayer) {
+                    r2 += xInc[j + 1];
+                    c2 += yInc[j + 1];
+                    if (inBound(r2, c2)  && gameBoard[r2][c2] == currentPlayer) {
+                        winPositions.add(new Position(r2, c2));
+                    }
+                }
+            }
+        }
+        return winPositions;
+    }
+
+    /**
      * Check if the last put disc resulted in a win.
      *
      * @param r the last row index
@@ -85,20 +139,21 @@ public class ConnectFour {
      * @return if currentplayer has won or not.
      */
     private boolean checkForWin(int r, int c) {
-        int nDirs = 8;
-        int xInc[] = {1, -1, 0, 0, 1, -1, 1, -1};
-        int yInc[] = {0, 0, 1, -1, 1, -1, -1, 1};
 
         //Check for four in line in a specific direction
         for (int i = 0; i < nDirs; i++) {
             if (winInDir(r, c, xInc[i], yInc[i])) {
+                winRow = r;
+                winCol = c;
                 return true;
             }
         }
 
         //Check for four in line combined in two directions
-        for(int j = 0; j < nDirs; j += 2){
-            if (nbrInDir(r, c, xInc[j], yInc[j]) + nbrInDir(r, c, xInc[j+1], yInc[j+1]) >= 5) {//5 because point gameBoard[r][c] will be counted twice
+        for (int j = 0; j < nDirs; j += 2) {
+            if (nbrInDir(r, c, xInc[j], yInc[j]) + nbrInDir(r, c, xInc[j + 1], yInc[j + 1]) >= 5) {//5 because point gameBoard[r][c] will be counted twice
+                winRow = r;
+                winCol = c;
                 return true;
             }
         }
@@ -123,6 +178,7 @@ public class ConnectFour {
         }
         return inLine;
     }
+
 
     /**
      * Check if the row index and col index given is inside gameboard.
@@ -153,6 +209,7 @@ public class ConnectFour {
         }
         return inLine >= 4;
     }
+
 
     /**
      * Saves the game instance to shared preferences.
