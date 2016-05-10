@@ -270,7 +270,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             gameBoardTable.get(row).getChildAt(col).setBackgroundResource(winnerDrawable);
                         }
                     });
-
                 }
 
                 getSupportFragmentManager()
