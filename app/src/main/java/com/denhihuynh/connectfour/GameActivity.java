@@ -3,6 +3,7 @@ package com.denhihuynh.connectfour;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,12 +20,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import constants.SharedPreferenceConstants;
+import fragments.ResultFragment;
 import model.ConnectFour;
 
 /**
  * This activity handles the game animations and gameplay.
  */
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity extends AppCompatActivity implements View.OnClickListener, ResultFragment.OnFragmentInteractionListener {
     private final static String TAG = "GameActivity";
     final static long INTERVAL = 100;
     private TableLayout tableLayout;
@@ -38,13 +40,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> playerNames;
     private int lastRow, lastCol;
     private SharedPreferences prefs;
-
+    private boolean finishedGame;
+    private Button col1,col2,col3,col4,col5,col6,col7;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         rows = 6;
         cols = 7;
+        finishedGame = false;
         gameBoardTable = new ArrayList<>();
         auditLog = new StringBuilder();
         tableLayout = (TableLayout) findViewById(R.id.gameTable);
@@ -126,13 +130,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         LayoutInflater inflater = getLayoutInflater();
         for (int i = 0; i < 6; i++) {
             TableRow rowView = (TableRow) inflater.inflate(R.layout.tablerow_game, null, false);
-            Button col1 = (Button) rowView.getChildAt(0);
-            Button col2 = (Button) rowView.getChildAt(1);
-            Button col3 = (Button) rowView.getChildAt(2);
-            Button col4 = (Button) rowView.getChildAt(3);
-            Button col5 = (Button) rowView.getChildAt(4);
-            Button col6 = (Button) rowView.getChildAt(5);
-            Button col7 = (Button) rowView.getChildAt(6);
+            col1 = (Button) rowView.getChildAt(0);
+            col2 = (Button) rowView.getChildAt(1);
+            col3 = (Button) rowView.getChildAt(2);
+            col4 = (Button) rowView.getChildAt(3);
+            col5 = (Button) rowView.getChildAt(4);
+            col6 = (Button) rowView.getChildAt(5);
+            col7 = (Button) rowView.getChildAt(6);
             col1.setOnClickListener(this);
             col2.setOnClickListener(this);
             col3.setOnClickListener(this);
@@ -148,31 +152,33 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        int col = 0;
-        switch (v.getId()) {
-            case R.id.button_column_1:
-                col = 0;
-                break;
-            case R.id.button_column_2:
-                col = 1;
-                break;
-            case R.id.button_column_3:
-                col = 2;
-                break;
-            case R.id.button_column_4:
-                col = 3;
-                break;
-            case R.id.button_column_5:
-                col = 4;
-                break;
-            case R.id.button_column_6:
-                col = 5;
-                break;
-            case R.id.button_column_7:
-                col = 6;
-                break;
+        if(!finishedGame){
+            int col = 0;
+            switch (v.getId()) {
+                case R.id.button_column_1:
+                    col = 0;
+                    break;
+                case R.id.button_column_2:
+                    col = 1;
+                    break;
+                case R.id.button_column_3:
+                    col = 2;
+                    break;
+                case R.id.button_column_4:
+                    col = 3;
+                    break;
+                case R.id.button_column_5:
+                    col = 4;
+                    break;
+                case R.id.button_column_6:
+                    col = 5;
+                    break;
+                case R.id.button_column_7:
+                    col = 6;
+                    break;
+            }
+            dropDisc(col);
         }
-        dropDisc(col);
     }
 
     /**
@@ -219,14 +225,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final int action = connectFour.evaluateGame(lastRow, lastCol);
         switch (action) {
             case ConnectFour.FULLBOARD:
+                finishedGame = true;
                 prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
                 prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
-                Bundle extra = new Bundle();
-                extra.putStringArrayList(GameResultActivity.PLAYERNAMES, playerNames);
-                extra.putString(GameResultActivity.RESULT, GameResultActivity.RESULTTIE);
-                Intent tieIntent = new Intent(this, GameResultActivity.class);
-                tieIntent.putExtras(extra);
-                startActivity(tieIntent);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.game_Container, ResultFragment.newInstance(ResultFragment.RESULTTIE, playerNames, null)).commit();
+
                 break;
             case ConnectFour.CONTINUEDGAME:
                 this.runOnUiThread(new Runnable() {
@@ -243,19 +247,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
             default: //This means we have a winner
+                // Add the fragment to the 'fragment_container' FrameLayout
+                finishedGame = true;
                 prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
                 prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
-                Bundle extras = new Bundle();
-                extras.putString(GameResultActivity.RESULT, GameResultActivity.RESULTWINNER);
-                extras.putStringArrayList(GameResultActivity.PLAYERNAMES, playerNames);
+                String winner;
                 if (currentPlayer == 0) {
-                    extras.putString(GameResultActivity.WINNERNAME, playerNames.get(0));
+                    winner = playerNames.get(0);
                 } else {
-                    extras.putString(GameResultActivity.WINNERNAME, playerNames.get(1));
+                    winner = playerNames.get(1);
                 }
-                Intent winIntent = new Intent(this, GameResultActivity.class);
-                winIntent.putExtras(extras);
-                startActivity(winIntent);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.winscreenanim,android.R.anim.fade_out)
+                        .add(R.id.game_Container, ResultFragment.newInstance(ResultFragment.RESULTWINNER, playerNames, winner)).commit();
+
                 break;
 
         }
@@ -290,6 +296,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         prefs.edit().putString(SharedPreferenceConstants.PLAYERONENAME, playerNames.get(0)).apply();
         prefs.edit().putString(SharedPreferenceConstants.PLAYERTWONAME, playerNames.get(1)).apply();
         connectFour.saveGameInstance();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //TODO add interaction
     }
 
     /**
@@ -346,7 +357,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             timerTask.cancel();
             evaluateGame();
             rowIndex = 0;
-            while(rowIndex < 6 && rowIndex < destinationRowIndex){
+            while (rowIndex < 6 && rowIndex < destinationRowIndex) {
                 gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
                 rowIndex++;
             }

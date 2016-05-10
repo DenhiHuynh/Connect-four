@@ -64,7 +64,7 @@ public class ConnectFour {
         }
         //Check if the board is full
         boolean fullBoard = true;
-        for (int i = 0; i < rows; i++) {
+        for (int i = 0; i < cols; i++) {
             if (gameBoard[rows - 1][i] == -1) {
                 fullBoard = false;
             }
