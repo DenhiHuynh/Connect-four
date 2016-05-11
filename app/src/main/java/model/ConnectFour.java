@@ -112,6 +112,7 @@ public class ConnectFour {
                 int c1 = winCol;
                 int r2 = winRow;
                 int c2 = winCol;
+                winPositions.add(new Position(winRow, winCol));
                 while (inBound(r1, c1) && gameBoard[r1][c1] == currentPlayer) {
                     r1 += xInc[j];
                     c1 += yInc[j];
