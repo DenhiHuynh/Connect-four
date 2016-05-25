@@ -42,7 +42,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int lastRow, lastCol;
     private SharedPreferences prefs;
     private boolean finishedGame;
-    private Button col1, col2, col3, col4, col5, col6, col7;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,15 +129,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void addGameBoardRows() {
         LayoutInflater inflater = getLayoutInflater();
+        tableLayout.setStretchAllColumns(true);
+        tableLayout.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
+        tableLayout.setWeightSum(6);
         for (int i = 0; i < 6; i++) {
-            TableRow rowView = (TableRow) inflater.inflate(R.layout.tablerow_game, null, false);
-            col1 = (Button) rowView.getChildAt(0);
-            col2 = (Button) rowView.getChildAt(1);
-            col3 = (Button) rowView.getChildAt(2);
-            col4 = (Button) rowView.getChildAt(3);
-            col5 = (Button) rowView.getChildAt(4);
-            col6 = (Button) rowView.getChildAt(5);
-            col7 = (Button) rowView.getChildAt(6);
+            TableRow tableRow = (TableRow) inflater.inflate(R.layout.tablerow_game, null, false);
+            tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT, 1.0f));
+            Button col1 = (Button) tableRow.getChildAt(0);
+            Button col2 = (Button) tableRow.getChildAt(1);
+            Button col3 = (Button) tableRow.getChildAt(2);
+            Button col4 = (Button) tableRow.getChildAt(3);
+            Button col5 = (Button) tableRow.getChildAt(4);
+            Button col6 = (Button) tableRow.getChildAt(5);
+            Button col7 = (Button) tableRow.getChildAt(6);
             col1.setOnClickListener(this);
             col2.setOnClickListener(this);
             col3.setOnClickListener(this);
@@ -146,8 +149,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             col5.setOnClickListener(this);
             col6.setOnClickListener(this);
             col7.setOnClickListener(this);
-            tableLayout.addView(rowView);
-            gameBoardTable.add(rowView);
+            tableLayout.addView(tableRow);
+            gameBoardTable.add(tableRow);
         }
     }
 
@@ -230,7 +233,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 finishedGame = true;
                 prefs.edit().putString(SharedPreferenceConstants.AUDITLOG, auditLog.toString()).apply();
                 prefs.edit().putBoolean(SharedPreferenceConstants.ONGOINGGAMEEXISTS, false).apply();
-                getSupportFragmentManager().beginTransaction()
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.result_screen_anim_in, R.anim.result_screen_anim_out)
                         .add(R.id.game_Container, ResultFragment.newInstance(ResultFragment.RESULTTIE, playerNames, null)).commit();
 
                 break;
@@ -328,6 +333,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         private int drawableId;
         private int destinationRowIndex;
         private boolean isFinished;
+        private Timer timer;
 
         public DiscDropper(final int destinationRowIndex, final int col, final int drawableId) {
             this.col = col;
@@ -348,6 +354,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         });
                     } else {
+                        int rowIndex = 0;
+                        while (rowIndex < 6 && rowIndex < destinationRowIndex) {
+                            gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
+                            rowIndex++;
+                        }
                         evaluateGame();
                         isFinished = true;
                         cancel();
@@ -361,7 +372,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
          */
         public void start() {
             gameBoardTable.get(0).getChildAt(col).setBackgroundResource(drawableId);
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.scheduleAtFixedRate(timerTask, INTERVAL, INTERVAL);
         }
 
@@ -370,6 +381,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
          */
         public void stop() {
             timerTask.cancel();
+            timer.cancel();
             int rowIndex = 0;
             while (rowIndex < 6 && rowIndex < destinationRowIndex) {
                 gameBoardTable.get(rowIndex).getChildAt(col).setBackgroundResource(R.drawable.rounded_corner_white);
