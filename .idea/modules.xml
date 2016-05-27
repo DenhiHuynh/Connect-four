@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Four-in-a-row.iml" filepath="$PROJECT_DIR$/Four-in-a-row.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Connect-four.iml" filepath="$PROJECT_DIR$/Connect-four.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
